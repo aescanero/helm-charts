@@ -1,0 +1,145 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "powerdns.fullname" . }}
+  labels:
+{{ include "powerdns.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "powerdns.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "powerdns.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-powerdns
+          image: "{{ .Values.powerdns.image.repository }}:{{ .Values.powerdns.image.tag }}"
+          imagePullPolicy: {{ .Values.powerdns.image.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20 ; pdnsutil create-zone {{ .Values.powerdns.domain }}"]
+          env:
+          - name: PDNS_api_key
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: PDNS_APIKEY
+          - name: PDNS_master
+            value: {{ .Values.powerdns.master | quote}}
+          - name: PDNS_api
+            value: {{ .Values.powerdns.api | quote }}
+          - name: PDNS_webserver
+            value: {{ .Values.powerdns.webserver | quote }}
+          - name: PDNS_webserver_address
+            value: {{ .Values.powerdns.webserver_address | quote }}
+          - name: PDNS_webserver_allow_from
+            value: {{ .Values.powerdns.webserver_allow_from | quote }}
+          - name: PDNS_webserver_password
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: PDNS_APIKEY
+          - name: PDNS_version_string
+            value: {{ .Values.powerdns.version_string | quote }}
+          - name: PDNS_default_ttl
+            value: {{ .Values.powerdns.default_ttl | quote }}
+          - name: PDNS_soa_minimum_ttl
+            value: {{ .Values.powerdns.soa_minimum_ttl | quote }}
+          - name: PDNS_default_soa_name
+            value: "ns1.{{ .Values.powerdns.domain }}"
+          - name: PDNS_default_soa_mail
+            value: "hostmaster.{{ .Values.powerdns.domain }}"
+          - name: MYSQL_ENV_MYSQL_HOST
+            value: {{ .Values.powerdns.mysql_host | quote }} 
+          - name: MYSQL_ENV_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: MYSQL_PASS
+          - name: MYSQL_ENV_MYSQL_DATABASE
+            value: {{ .Values.powerdns.mysql_database | quote }} 
+          - name: MYSQL_ENV_MYSQL_USER
+            value: {{ .Values.powerdns.mysql_user | quote }} 
+          - name: MYSQL_ENV_MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: MYSQL_PASS
+          ports:
+          - containerPort: 53
+            name: dns
+            protocol: UDP
+          - containerPort: 8081
+            name: api
+            protocol: TCP
+{{ if .Values.powerdnsadmin.enabled }}
+        - name: {{ .Chart.Name }}-powerdnsadmin
+          image: "{{ .Values.powerdnsadmin.image.repository }}:{{ .Values.powerdnsadmin.image.tag }}"
+          imagePullPolicy: {{ .Values.powerdnsadmin.image.pullPolicy }}
+          env:
+          - name: PDNS_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: PDNS_APIKEY
+          - name: PDNSADMIN_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: PDNSADMIN_SECRET
+          - name: PDNS_PROTO
+            value: {{ .Values.powerdnsadmin.proto | quote }} 
+          - name: PDNS_HOST
+            value: {{ .Values.powerdnsadmin.powerdns_host | quote }} 
+          - name: PDNS_PORT
+            value: {{ .Values.powerdnsadmin.powerdns_port | quote }} 
+          - name: PDNSADMIN_SQLA_DB_HOST
+            value: {{ .Values.powerdnsadmin.mysql_host | quote }} 
+          - name: PDNSADMIN_SQLA_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: MYSQL_PASS
+          - name: PDNSADMIN_SQLA_DB_NAME
+            value: {{ .Values.powerdnsadmin.mysql_database | quote }} 
+          - name: PDNSADMIN_SQLA_DB_USER
+            value: {{ .Values.powerdnsadmin.mysql_user | quote }} 
+          ports:
+          - containerPort: 9191
+            name: pdns-admin-http
+            protocol: TCP
+{{ end }}
+{{ if .Values.alpinemariadb.enabled }}
+        - name: {{ .Chart.Name }}-mariadb
+          image: "{{ .Values.alpinemariadb.image.repository }}:{{ .Values.alpinemariadb.image.tag }}"
+          imagePullPolicy: {{ .Values.alpinemariadb.image.pullPolicy }}
+          env:
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.name" . }}-secrets
+                key: MYSQL_PASS
+          - name: MYSQL_DATABASE
+            value: {{ .Values.powerdns.mysql_database | quote }} 
+          - name: MYSQL_USER
+            value: {{ .Values.powerdns.mysql_user | quote }} 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "powerdns.name" . }}-secrets
+              key: MYSQL_PASS
+{{ end }}
