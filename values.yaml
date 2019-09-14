@@ -25,9 +25,9 @@ powerdns:
   default_ttl: "1500"
   soa_minimum_ttl: "1200"
   default_soa_name: "ns1.external.local"
-  mariadb_host: "127.0.0.1"
-  mariadb_database: "powerdns"
-  mariadb_user: "powerdns"
+  mysql_host: "127.0.0.1"
+  mysql_database: "powerdns"
+  mysql_user: "powerdns"
 
 alpinemariadb:
   enabled: true
@@ -48,9 +48,9 @@ powerdnsadmin:
   proto: "http"
   powerdns_host: "127.0.0.1"
   powerdns_port: "8081"
-  mariadb_host: "127.0.0.1"
-  mariadb_database: "powerdns"
-  mariadb_user: "powerdns"
+  mysql_host: "127.0.0.1"
+  mysql_database: "powerdns"
+  mysql_user: "powerdns"
 
 
 nameOverride: ""
