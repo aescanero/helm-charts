@@ -11,11 +11,13 @@
   echo http://$NODE_IP:$NODE_PORT
 {{- else if eq .Values.powerdns.service.dns.type "LoadBalancer" }}
      NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-           You can watch the status of by running 'kubectl get svc -w {{ template "powerdns.fullname" . }}'
-  export SERVICE_IP=$(kubectl get svc {{ template "powerdns.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo http://$SERVICE_IP:{{ .Values.powerdns.service.dns.port }}
+           You can watch the status of by running 'kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc -w {{ template "powerdns.fullname" . }}'
+  export SERVICE_IP1=$(kubectl  {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-dns -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  export SERVICE_IP2=$(kubectl  {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-admin -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo dns://$SERVICE_IP1:{{ .Values.powerdns.service.dns.port }}
+  echo http://$SERVICE_IP2:{{ .Values.powerdnsadmin.service.port }}
 {{- else if contains "ClusterIP" .Values.powerdns.service.dns.type }}
-  export POD_NAME=$(kubectl get pods -l "app={{ template "powerdns.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  export POD_NAME=$(kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get pods -l "app={{ template "powerdns.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl port-forward $POD_NAME 8080:80
 {{- end }}

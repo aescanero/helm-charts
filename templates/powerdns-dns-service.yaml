@@ -12,5 +12,5 @@ spec:
       protocol: UDP
       name: dns
   selector:
-    app.kubernetes.io/name: {{ include "powerdns.name" . }}-service-dns
+    app.kubernetes.io/name: {{ .Release.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}

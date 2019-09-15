@@ -40,7 +40,7 @@ powerdnsadmin:
   enabled: true
   service:
     type: LoadBalancer
-    port: 8081
+    port: 9191
   image:
     repository: aescanero/powerdns-admin
     tag: latest

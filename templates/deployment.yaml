@@ -17,6 +17,26 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
+{{ if .Values.alpinemariadb.enabled }}
+        - name: {{ .Chart.Name }}-mariadb
+          image: "{{ .Values.alpinemariadb.image.repository }}:{{ .Values.alpinemariadb.image.tag }}"
+          imagePullPolicy: {{ .Values.alpinemariadb.image.pullPolicy }}
+          env:
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.fullname" . }}-secret
+                key: MYSQL_PASS
+          - name: MYSQL_DATABASE
+            value: {{ .Values.powerdns.mysql_database | quote }} 
+          - name: MYSQL_USER
+            value: {{ .Values.powerdns.mysql_user | quote }} 
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.fullname" . }}-secret
+                key: MYSQL_PASS
+{{ end }}
         - name: {{ .Chart.Name }}-powerdns
           image: "{{ .Values.powerdns.image.repository }}:{{ .Values.powerdns.image.tag }}"
           imagePullPolicy: {{ .Values.powerdns.image.pullPolicy }}
@@ -25,11 +45,11 @@ spec:
               command: ["/bin/sh", "-c", "pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null"]
           readinessProbe:
             exec:
-              command: ["/bin/sh", "-c", "pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null"]
+              command: ["/bin/sh", "-c", "nc -vz {{ .Values.powerdns.mysql_host }} 3306 2>/dev/null"]
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "sleep 20 ; (! pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null) && pdnsutil create-zone {{ .Values.powerdns.domain }}"]
+                command: ["/bin/sh", "-c", "a=0;while [ $a -lt 200 ];do sleep 1;a=$[a+1];if nc -vz {{ .Values.powerdns.mysql_host }} 3306 2>/dev/null;then (! pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null) && pdnsutil create-zone {{ .Values.powerdns.domain }};fi;done"]
           env:
           - name: PDNS_api_key
             valueFrom:
@@ -88,6 +108,12 @@ spec:
         - name: {{ .Chart.Name }}-powerdnsadmin
           image: "{{ .Values.powerdnsadmin.image.repository }}:{{ .Values.powerdnsadmin.image.tag }}"
           imagePullPolicy: {{ .Values.powerdnsadmin.image.pullPolicy }}
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "nc -vz 127.0.0.1 9191 2>/dev/null"]
+          readinessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "nc -vz {{ .Values.powerdns.mysql_host | }} 3306 2>/dev/null "]
           env:
           - name: PDNS_API_KEY
             valueFrom:
@@ -120,24 +146,4 @@ spec:
           - containerPort: 9191
             name: pdns-admin-http
             protocol: TCP
-{{ end }}
-{{ if .Values.alpinemariadb.enabled }}
-        - name: {{ .Chart.Name }}-mariadb
-          image: "{{ .Values.alpinemariadb.image.repository }}:{{ .Values.alpinemariadb.image.tag }}"
-          imagePullPolicy: {{ .Values.alpinemariadb.image.pullPolicy }}
-          env:
-          - name: MYSQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "powerdns.fullname" . }}-secret
-                key: MYSQL_PASS
-          - name: MYSQL_DATABASE
-            value: {{ .Values.powerdns.mysql_database | quote }} 
-          - name: MYSQL_USER
-            value: {{ .Values.powerdns.mysql_user | quote }} 
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "powerdns.fullname" . }}-secret
-                key: MYSQL_PASS
 {{ end }}
