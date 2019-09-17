@@ -29,7 +29,7 @@ powerdns:
   mysql_database: "powerdns"
   mysql_user: "powerdns"
 
-alpinemariadb:
+mariadb:
   enabled: true
   image:
     repository: yobasystems/alpine-mariadb
@@ -51,7 +51,6 @@ powerdnsadmin:
   mysql_host: "127.0.0.1"
   mysql_database: "powerdns"
   mysql_user: "powerdns"
-
 
 nameOverride: ""
 fullnameOverride: ""

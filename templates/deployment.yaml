@@ -17,20 +17,29 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-{{ if .Values.alpinemariadb.enabled }}
+{{ if .Values.mariadb.enabled }}
         - name: {{ .Chart.Name }}-mariadb
-          image: "{{ .Values.alpinemariadb.image.repository }}:{{ .Values.alpinemariadb.image.tag }}"
-          imagePullPolicy: {{ .Values.alpinemariadb.image.pullPolicy }}
+          image: "{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}"
+          imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
           env:
+{{ if .Values.mariadb.pass }}
+          - name: MYSQL_PASSWORD
+            value: {{ .Values.mariadb.pass | quote }} 
+{{ else }}
           - name: MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ template "powerdns.fullname" . }}-secret
                 key: MYSQL_PASS
+{{ end }}
           - name: MYSQL_DATABASE
             value: {{ .Values.powerdns.mysql_database | quote }} 
           - name: MYSQL_USER
             value: {{ .Values.powerdns.mysql_user | quote }} 
+{{ if .Values.mariadb.rootpass }}
+          - name: MYSQL_ROOT_PASSWORD
+            value: {{ .Values.mariadb.rootpass | quote }} 
+{{ else }}
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -45,11 +54,11 @@ spec:
               command: ["/bin/sh", "-c", "pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null"]
           readinessProbe:
             exec:
-              command: ["/bin/sh", "-c", "nc -vz {{ .Values.powerdns.mysql_host }} 3306 2>/dev/null"]
+              command: ["/bin/sh", "-c", "nc -vz {{ .Values.powerdns.mysql_host }} 3306"]
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "a=0;while [ $a -lt 200 ];do sleep 1;a=$[a+1];if nc -vz {{ .Values.powerdns.mysql_host }} 3306 2>/dev/null;then (! pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null) && pdnsutil create-zone {{ .Values.powerdns.domain }};fi;done"]
+                command: ["/bin/sh", "-c", "a=0;while [ $a -lt 200 ];do sleep 1;a=$[a+1];echo 'stage: '$a;if nc -vz {{ .Values.powerdns.mysql_host }} 3306;then (! pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null) && pdnsutil create-zone {{ .Values.powerdns.domain }};echo 'End Stage';a=200;fi;done"]
           env:
           - name: PDNS_api_key
             valueFrom:
@@ -83,20 +92,30 @@ spec:
             value: "hostmaster.{{ .Values.powerdns.domain }}"
           - name: MYSQL_ENV_MYSQL_HOST
             value: {{ .Values.powerdns.mysql_host | quote }} 
+{{ if .Values.powerdns.mysql_pass }}
+          - name: MYSQL_ENV_MYSQL_PASSWORD
+            value: {{ .Values.powerdns.mysql_pass | quote }} 
+{{ else }}
           - name: MYSQL_ENV_MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ template "powerdns.fullname" . }}-secret
                 key: MYSQL_PASS
+{{ end }}
           - name: MYSQL_ENV_MYSQL_DATABASE
             value: {{ .Values.powerdns.mysql_database | quote }} 
           - name: MYSQL_ENV_MYSQL_USER
             value: {{ .Values.powerdns.mysql_user | quote }} 
+{{ if .Values.powerdns.mysql_rootpass }}
+          - name: MYSQL_ENV_MYSQL_ROOT_PASSWORD
+            value: {{ .Values.powerdns.mysql_rootpass | quote }} 
+{{ else }}
           - name: MYSQL_ENV_MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ template "powerdns.fullname" . }}-secret
                 key: MYSQL_PASS
+{{ end }}
           ports:
           - containerPort: 53
             name: dns
@@ -133,11 +152,16 @@ spec:
             value: {{ .Values.powerdnsadmin.powerdns_port | quote }} 
           - name: PDNSADMIN_SQLA_DB_HOST
             value: {{ .Values.powerdnsadmin.mysql_host | quote }} 
+{{ if .Values.powerdnsadmin.mysql_pass }}
+          - name: PDNSADMIN_SQLA_DB_PASSWORD
+            value: {{ .Values.powerdnsadmin.mysql_pass | quote }} 
+{{ else }}
           - name: PDNSADMIN_SQLA_DB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ template "powerdns.fullname" . }}-secret
                 key: MYSQL_PASS
+{{ end }}
           - name: PDNSADMIN_SQLA_DB_NAME
             value: {{ .Values.powerdnsadmin.mysql_database | quote }} 
           - name: PDNSADMIN_SQLA_DB_USER
