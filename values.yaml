@@ -35,6 +35,10 @@ mariadb:
     repository: yobasystems/alpine-mariadb
     tag: latest
     pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    accessMode: 'ReadWriteOnce'
+    size: '1Gi'
 
 powerdnsadmin:
   enabled: true

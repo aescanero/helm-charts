@@ -1,23 +1,39 @@
-1. Get the application URL by running these commands:
+Access to the DNS Server and Dashboard by running these commands:
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
   http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ . }}
   {{- end }}
 {{- end }}
-{{- else if eq .Values.powerdns.service.dns.type "NodePort" }}
-  export NODE_PORT=$(kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "powerdns.fullname" . }})
-  export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+{{- end }}
+{{- if eq .Values.powerdns.service.dns.type "NodePort" }}
+  export NODE_PORT=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "powerdns.fullname" . }})-service-dns
+  export NODE_IP=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo Point your DNS client to $NODE_IP:$NODE_PORT
+{{- end }}
+{{- if eq .Values.powerdnsadmin.service.type "NodePort" }}
+  export NODE_PORT=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "powerdns.fullname" . }})-service-admin
+  export NODE_IP=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
   echo http://$NODE_IP:$NODE_PORT
-{{- else if eq .Values.powerdns.service.dns.type "LoadBalancer" }}
+  echo Dashboard access at http://$SERVICE_IP2:{{ .Values.powerdnsadmin.service.port }}
+{{- end }}
+
+{{- if eq .Values.powerdns.service.dns.type "LoadBalancer" }}
      NOTE: It may take a few minutes for the LoadBalancer IP to be available.
            You can watch the status of by running 'kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc -w {{ template "powerdns.fullname" . }}'
-  export SERVICE_IP1=$(kubectl  {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-dns -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  export SERVICE_IP2=$(kubectl  {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-admin -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo dns://$SERVICE_IP1:{{ .Values.powerdns.service.dns.port }}
-  echo http://$SERVICE_IP2:{{ .Values.powerdnsadmin.service.port }}
-{{- else if contains "ClusterIP" .Values.powerdns.service.dns.type }}
-  export POD_NAME=$(kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get pods -l "app={{ template "powerdns.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8080 to use your application"
+  export SERVICE_IP1=$(kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-dns -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  export SERVICE_IP2=$(kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-admin -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo Point your DNS client to $SERVICE_IP1:{{ .Values.powerdns.service.dns.port }}
+  echo Dashboard access at http://$SERVICE_IP2:{{ .Values.powerdnsadmin.service.port }}
+{{- end }}
+
+{{- if contains "ClusterIP" .Values.powerdns.service.dns.type }}
+  export POD_NAME=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get pods -l "app={{ template "powerdns.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  echo "Point your DNS client to 127.0.0.1:53"
+  kubectl port-forward $POD_NAME 53:53
+{{- end }}
+{{- if contains "ClusterIP" .Values.powerdnsadmin.service.type }}
+  export POD_NAME=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get pods -l "app={{ template "powerdns.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:8080 to use the dashboard"
   kubectl port-forward $POD_NAME 8080:80
 {{- end }}

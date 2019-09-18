@@ -48,7 +48,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-The following table lists the configurable parameters of the phpBB chart and their default values.
+The following table lists the configurable parameters of the PowerDNS chart and their default values.
 
 |             Parameter             |              Description                   |                         Default                         |
 |-----------------------------------|--------------------------------------------|---------------------------------------------------------|
@@ -75,12 +75,18 @@ The following table lists the configurable parameters of the phpBB chart and the
 | `powerdns.mysql_user`             | User of the external database              | `powerdns`                                              |
 | `powerdns.mysql_rootpass`         | Password of the root user of external BD   | `nil`                                                   |
 | `powerdns.mysql_pass`             | Password of the user                       | `nil`                                                   |
+| `powerdns.resources`              | CPU/Memory resource requests/limits        | Memory: `512Mi`, CPU: `300m`                            |
 | `mariadb.enabled`                 | Deploy the Database packaged with Helm     | `true`                                                  |
 | `mariadb.image.repository`        | MariaDB image name                         | `yobasystems/alpine-mariadb`                            |
 | `mariadb.image.tag`               | MariaDB image tag                          | `latest`                                                |
 | `mariadb.image.pullPolicy`        | Image pull policy                          | `IfNotPresent`                                          |
 | `mariadb.mysql_rootpass`          | Password of the root user of internal BD   | `nil`                                                   |
 | `mariadb.mysql_pass`              | Password of the user                       | `nil`                                                   |
+| `mariadb.persistence.enabled`     | Enable persistence using PVC               | `true`                                                  |
+| `mariadb.persistence.storageClass`| PVC Storage Class for MariaDB volume       | `nil`                                                   |
+| `mariadb.persistence.accessMode`  | PVC Access Mode for MariaDB volume         | `ReadWriteOnce`                                         |
+| `mariadb.persistence.size`        | PVC Storage Request for MariaDB volume     | `1Gi`                                                   |
+| `mariadb.resources`               | CPU/Memory resource requests/limits        | Memory: `512Mi`, CPU: `300m`                            |
 | `powerdnsadmin.enabled`           | Deploy the Dashboard packaged with Helm    | `true`                                                  |
 | `powerdnsadmin.service.type`      | Class of Kubernetes PowerDNS-Admin Service | `LoadBalancer`                                          |
 | `powerdnsadmin.service.port`      | Port of the PowerDNS-Admin Service         | `9191`                                                  |
@@ -94,11 +100,7 @@ The following table lists the configurable parameters of the phpBB chart and the
 | `powerdnsadmin.mysql_database`    | Name of the external database              | `powerdns`                                              |
 | `powerdnsadmin.mysql_user`        | User of the external database              | `powerdns`                                              |
 | `powerdnsadmin.mysql_pass`        | Password of the user                       | `nil`                                                   |
-| `persistence.enabled`             | Enable persistence using PVC               | `true`                                                  |
-| `persistence.mariadb.storageClass`| PVC Storage Class for phpBB volume         | `nil` (uses alpha storage class annotation)             |
-| `persistence.mariadb.accessMode`  | PVC Access Mode for phpBB volume           | `ReadWriteOnce`                                         |
-| `persistence.mariadb.size`        | PVC Storage Request for phpBB volume       | `8Gi`                                                   |
-|-----------------------------------|---------------------------------------|--------------------------------------------------------------|
+| `powerdnsadmin.resources`         | CPU/Memory resource requests/limits        | Memory: `512Mi`, CPU: `300m`                            |
 
 The above parameters map to the env variables defined in each container. For more information please refer to each image documentation.
 
