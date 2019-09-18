@@ -8,7 +8,7 @@ PowerDNS with Mariadb and PowerDNS-Admin Helm to easy PowerDNS deploy on Kuberne
 Supported for Helm v3
 
 ```console
-$ helm install powerdns https://github.com/aescanero/powerdns/releases/download/0.1/powerdns-0.1.0.tgz
+$ helm install powerdns https://github.com/aescanero/powerdns/releases/download/0.1.1/powerdns-0.1.1.tgz
 ```
 
 ## Introduction
@@ -29,7 +29,7 @@ It also packages:
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm install --name my-release https://github.com/aescanero/powerdns/releases/download/0.1/powerdns-0.1.0.tgz
+$ helm install --name my-release https://github.com/aescanero/powerdns/releases/download/0.1.1/powerdns-0.1.1.tgz
 ```
 
 The command deploys PowerDNS on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -109,7 +109,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```console
 $ helm install --name powerdns-release \
   --set domain=disasterproject.com \
-    https://github.com/aescanero/powerdns/releases/download/0.1/powerdns-0.1.0.tgz
+    https://github.com/aescanero/powerdns/releases/download/0.1.1/powerdns-0.1.1.tgz
 ```
 
 The above command sets the domain managed by PowerDNS to `disasterproject.com`.
