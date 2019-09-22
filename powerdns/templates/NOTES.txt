@@ -1,10 +1,6 @@
 Access to the DNS Server and Dashboard by running these commands:
-{{- if .Values.ingress.enabled }}
-{{- range $host := .Values.ingress.hosts }}
-  {{- range .paths }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ . }}
-  {{- end }}
-{{- end }}
+{{- if .Values.powerdnsadmin.ingress.enabled }}
+  http://{{ .Values.powerdnsadmin.ingress.hostname }}.{{ .Values.powerdns.domain }}{{ .Values.powerdnsadmin.ingress.path }}
 {{- end }}
 {{- if eq .Values.powerdns.service.dns.type "NodePort" }}
   export NODE_PORT=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "powerdns.fullname" . }})-service-dns
