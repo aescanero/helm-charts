@@ -32,7 +32,7 @@ powerdns:
 mariadb:
   enabled: true
   image:
-    repository: yobasystems/alpine-mariadb
+    repository: mariadb
     tag: latest
     pullPolicy: IfNotPresent
   persistence:

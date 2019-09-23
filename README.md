@@ -17,7 +17,7 @@ This chart bootstraps a [pschiffe/docker-pdns](https://github.com/pschiffe/docke
 
 It also packages:
 - [aescanero/docker-powerdns-admin-alpine](https://github.com/aescanero/docker-powerdns-admin-alpine) based in [ngoduykhanh/PowerDNS-Admin](https://github.com/ngoduykhanh/PowerDNS-Admin) which provide a dashboard for PowerDNS management.
-- [yobasystems/alpine-mariadb](https://github.com/yobasystems/alpine-mariadb) which is required for bootstrapping a MariaDB deployment for the database requirements of the PowerDNS and PowerDNS-Admin applications.
+- [mariadb](https://www.mariadb.org) which is required for bootstrapping a MariaDB deployment for the database requirements of PowerDNS and PowerDNS-Admin applications.
 
 ## Prerequisites
 
@@ -77,7 +77,7 @@ The following table lists the configurable parameters of the PowerDNS chart and 
 | `powerdns.mysql_pass`             | Password of the user                       | `nil`                                                   |
 | `powerdns.resources`              | CPU/Memory resource requests/limits        | Memory: `512Mi`, CPU: `300m`                            |
 | `mariadb.enabled`                 | Deploy the Database packaged with Helm     | `true`                                                  |
-| `mariadb.image.repository`        | MariaDB image name                         | `yobasystems/alpine-mariadb`                            |
+| `mariadb.image.repository`        | MariaDB image name                         | `mariadb`                                               |
 | `mariadb.image.tag`               | MariaDB image tag                          | `latest`                                                |
 | `mariadb.image.pullPolicy`        | Image pull policy                          | `IfNotPresent`                                          |
 | `mariadb.mysql_rootpass`          | Password of the root user of internal BD   | `nil`                                                   |
@@ -126,7 +126,7 @@ $ helm install --name my-release -f values.yaml https://raw.githubusercontent.co
 
 ## Persistence
 
-The [yobasystems/alpine-mariadb](https://github.com/yobasystems/alpine-mariadb) image stores the Database at `/var/lib/mysql` path of the container.
+The [mariadb](https://www.mariadb.org) image stores the Database at `/var/lib/mysql` path of the container.
 
 Persistent Volume Claims are used to keep the data across deployments.
 
