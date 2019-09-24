@@ -21,7 +21,7 @@ It also packages:
 
 ## Prerequisites
 
-- Kubernetes 1.4+ with Beta APIs enabled
+- Kubernetes 1.8+ with Beta APIs enabled
 - PV provisioner support in the underlying infrastructure (Optional)
 
 ## Installing the Chart
@@ -87,7 +87,7 @@ The following table lists the configurable parameters of the PowerDNS chart and 
 | `mariadb.persistence.accessMode`  | PVC Access Mode for MariaDB volume         | `ReadWriteOnce`                                         |
 | `mariadb.persistence.size`        | PVC Storage Request for MariaDB volume     | `1Gi`                                                   |
 | `mariadb.resources`               | CPU/Memory resource requests/limits        | Memory: `512Mi`, CPU: `300m`                            |
-| `mariadb.args`                    | mysqld arguments                           | `--bind-address=127.0.0.1 --innodb_use_native_aio=0 --innodb_flush_method=fsync | 
+| `mariadb.args`                    | mysqld arguments                           | `--bind-address=127.0.0.1 --innodb_use_native_aio=0 --innodb_flush_method=fsync` | 
 | `powerdnsadmin.enabled`           | Deploy the Dashboard packaged with Helm    | `true`                                                  |
 | `powerdnsadmin.service.type`      | Class of Kubernetes PowerDNS-Admin Service | `LoadBalancer`                                          |
 | `powerdnsadmin.service.port`      | Port of the PowerDNS-Admin Service         | `9191`                                                  |
