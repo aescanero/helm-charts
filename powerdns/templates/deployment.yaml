@@ -23,9 +23,13 @@ spec:
           imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
           resources:
 {{ toYaml .Values.mariadb.resources | indent 12 }}
+{{- if .Values.mariadb.args }}
           args:
-          - --bind-address=0.0.0.0
+          - {{ .Values.mariadb.args }}
+{{- end }}
           env:
+          - name: MYSQL_INITDB_SKIP_TZINFO
+            value: "1"
 {{- if .Values.mariadb.pass }}
           - name: MYSQL_PASSWORD
             value: {{ .Values.mariadb.pass | quote }} 
