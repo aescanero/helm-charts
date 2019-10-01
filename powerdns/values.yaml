@@ -39,6 +39,7 @@ mariadb:
     enabled: true
     accessMode: 'ReadWriteOnce'
     size: '1Gi'
+  args: "--bind-address=127.0.0.1 --innodb_use_native_aio=0 --innodb_flush_method=fsync"
 
 powerdnsadmin:
   enabled: true
