@@ -64,7 +64,7 @@ The following table lists the configurable parameters of the PowerDNS chart and 
 | `powerdns.master`                 | Deploy PowerDNS as master                  | `yes`                                                   |
 | `powerdns.api`                    | Enable API for Management (need webserver) | `yes`                                                   |
 | `powerdns.webserver`              | Enable web server to publish API           | `yes`                                                   |
-| `powerdns.webserver_address`      | IP where the web server is published       | `0.0.0.0                                                |
+| `powerdns.webserver_address`      | IP where the web server is published       | `0.0.0.0`                                               |
 | `powerdns.webserver_allow_from`   | Allow access to web server only from       | `0.0.0.0/0`                                             |
 | `powerdns.version_string`         | Version to designate the DNS Server        | `anonymous`                                             |
 | `powerdns.default_ttl`            | time-to-live of the DNS resources          | `1500`                                                  |

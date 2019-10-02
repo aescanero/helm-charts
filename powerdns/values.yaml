@@ -28,6 +28,12 @@ powerdns:
   mysql_host: "127.0.0.1"
   mysql_database: "powerdns"
   mysql_user: "powerdns"
+  requests:
+    memory: "512Mi"
+    cpu: "300m"
+  limits:
+    memory: "512Mi"
+    cpu: "300m"
 
 mariadb:
   enabled: true
@@ -40,6 +46,12 @@ mariadb:
     accessMode: 'ReadWriteOnce'
     size: '1Gi'
   args: "--bind-address=127.0.0.1 --innodb_use_native_aio=0 --innodb_flush_method=fsync"
+  requests:
+    memory: "512Mi"
+    cpu: "300m"
+  limits:
+    memory: "512Mi"
+    cpu: "300m"
 
 powerdnsadmin:
   enabled: true
@@ -61,6 +73,12 @@ powerdnsadmin:
     class: "traefik"
     path: "/"
     hostname: "powerdns-admin"
+  requests:
+    memory: "512Mi"
+    cpu: "300m"
+  limits:
+    memory: "512Mi"
+    cpu: "300m"
 
 nameOverride: ""
 fullnameOverride: ""

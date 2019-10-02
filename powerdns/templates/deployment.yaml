@@ -73,8 +73,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "if nc -vz {{ .Values.powerdns.mysql_host }} 3306;then pdnsutil create-zone {{ .Values.powerdns.domain }};fi"]
-            initialDelaySeconds: 60
+                command: ["/bin/sh", "-c", "a=0;while [ $a -lt 200 ];do sleep 1;a=$[a+1];echo 'stage: '$a;if nc -vz {{ .Values.powerdns.mysql_host }} 3306;then (! pdnsutil list-zone {{ .Values.powerdns.domain }} 2>/dev/null) && pdnsutil create-zone {{ .Values.powerdns.domain }};echo 'End Stage';a=200;fi;done"]
           resources:
 {{ toYaml .Values.powerdns.resources | indent 12 }}
           env:
