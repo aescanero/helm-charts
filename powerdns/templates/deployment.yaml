@@ -30,9 +30,9 @@ spec:
           env:
           - name: MYSQL_INITDB_SKIP_TZINFO
             value: "1"
-{{- if .Values.mariadb.pass }}
+{{- if .Values.mariadb.mysql_pass }}
           - name: MYSQL_PASSWORD
-            value: {{ .Values.mariadb.pass | quote }} 
+            value: {{ .Values.mariadb.mysql_pass | quote }} 
 {{- else }}
           - name: MYSQL_PASSWORD
             valueFrom:
@@ -44,9 +44,9 @@ spec:
             value: {{ .Values.powerdns.mysql_database | quote }} 
           - name: MYSQL_USER
             value: {{ .Values.powerdns.mysql_user | quote }} 
-{{- if .Values.mariadb.rootpass }}
+{{- if .Values.mariadb.mysql_rootpass }}
           - name: MYSQL_ROOT_PASSWORD
-            value: {{ .Values.mariadb.rootpass | quote }}
+            value: {{ .Values.mariadb.mysql_rootpass | quote }}
 {{- else }}
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
