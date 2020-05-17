@@ -2,16 +2,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "powerdns.fullname" . }}-service-dns
+  name: {{ template "powerdns.fullname" . }}-service-dns-udp
   labels:
 {{ include "powerdns.labels" . | indent 4 }}
 spec:
   type: {{ .Values.powerdns.service.dns.type }}
   ports:
     - port: {{ .Values.powerdns.service.dns.port }}
-      targetPort: dns
+      targetPort: dns-udp
       protocol: UDP
-      name: dns
+      name: dns-udp
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
