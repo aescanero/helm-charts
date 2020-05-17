@@ -11,6 +11,9 @@ metadata:
 {{- end }}
 spec:
   type: {{ .Values.powerdns.service.dns.tcp.type }}
+  {{- if .Values.powerdns.service.dns.tcp.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.powerdns.service.dns.tcp.loadBalancerIP }}
+  {{- end }}
   ports:
     - port: {{ .Values.powerdns.service.dns.tcp.port }}
       targetPort: dns-tcp

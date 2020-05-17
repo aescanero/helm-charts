@@ -11,6 +11,9 @@ metadata:
 {{- end }}
 spec:
   type: {{ .Values.powerdns.service.dns.udp.type }}
+  {{- if .Values.powerdns.service.dns.udp.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.powerdns.service.dns.udp.loadBalancerIP }}
+  {{- end }}
   ports:
     - port: {{ .Values.powerdns.service.dns.udp.port }}
       targetPort: dns-udp
