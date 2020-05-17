@@ -53,8 +53,14 @@ The following table lists the configurable parameters of the PowerDNS chart and 
 |             Parameter             |              Description                   |                         Default                         |
 |-----------------------------------|--------------------------------------------|---------------------------------------------------------|
 | `powerdns.enabled`                | Deploy the DNS Server packaged with Helm   | `true`                                                  |
-| `powerdns.service.dns.type`       | Class of the Kubernetes DNS Service        | `LoadBalancer`                                          |
-| `powerdns.service.dns.port`       | Port of the DNS Service                    | `53`                                                    |
+| `powerdns.service.dns.tcp.port`       | Port of the DNS (TCP) Service                    | `53`                                          |
+| `powerdns.service.dns.tcp.type`       | Class of the Kubernetes DNS (TCP) Service        | `LoadBalancer`                                |
+| `powerdns.service.dns.tcp.loadBalancerIP`       | Statically assign LoadBalancerIP (UDP)         | ``                                    |
+| `powerdns.service.dns.tcp.annotations`       | Annotations for service (TCP)         | ``                                                |
+| `powerdns.service.dns.udp.port`       | Port of the DNS (UDP) Service                    | `53`                                          |
+| `powerdns.service.dns.udp.type`       | Class of the Kubernetes DNS (UDP) Service        | `LoadBalancer`                                |
+| `powerdns.service.dns.udp.loadBalancerIP`       | Statically assign LoadBalancerIP (TCP)         | ``                                    |
+| `powerdns.service.dns.udp.annotations`       | Annotations for service (UDP)         | ``                                                |
 | `powerdns.service.api.type`       | Class of the Kubernetes PowerDNSAPI Service| `ClusterIP`                                             |
 | `powerdns.service.api.port`       | Port of the DNS Service                    | `53`                                                    |
 | `powerdns.image.repository`       | PowerDNS image name                        | `pschiffe/pdns-mysql`                                   |
