@@ -5,10 +5,13 @@ metadata:
   name: {{ template "powerdns.fullname" . }}-service-dns-tcp
   labels:
 {{ include "powerdns.labels" . | indent 4 }}
+{{- with .Values.powerdns.service.dns-tcp.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
 spec:
-  type: {{ .Values.powerdns.service.dns.type }}
+  type: {{ .Values.powerdns.service.dns-tcp.type }}
   ports:
-    - port: {{ .Values.powerdns.service.dns.port }}
+    - port: {{ .Values.powerdns.service.dns-tcp.port }}
       targetPort: dns-tcp
       protocol: TCP
       name: dns-tcp
