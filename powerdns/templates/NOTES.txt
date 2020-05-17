@@ -2,8 +2,8 @@ Access to the DNS Server and Dashboard by running these commands:
 {{- if .Values.powerdnsadmin.ingress.enabled }}
   http://{{ .Values.powerdnsadmin.ingress.hostname }}.{{ .Values.powerdns.domain }}{{ .Values.powerdnsadmin.ingress.path }}
 {{- end }}
-{{- if eq .Values.powerdns.service.dns.type "NodePort" }}
-  export NODE_PORT=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "powerdns.fullname" . }})-service-dns
+{{- if eq .Values.powerdns.service.dns.tcp.type "NodePort" }}
+  export NODE_PORT=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "powerdns.fullname" . }})-service-dns-tcp
   export NODE_IP=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
   echo Point your DNS client to $NODE_IP:$NODE_PORT
 {{- end }}
@@ -14,16 +14,16 @@ Access to the DNS Server and Dashboard by running these commands:
   echo Dashboard access at http://$SERVICE_IP2:{{ .Values.powerdnsadmin.service.port }}
 {{- end }}
 
-{{- if eq .Values.powerdns.service.dns.type "LoadBalancer" }}
+{{- if eq .Values.powerdns.service.dns.tcp.type "LoadBalancer" }}
      NOTE: It may take a few minutes for the LoadBalancer IP to be available.
            You can watch the status of by running 'kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc -w {{ template "powerdns.fullname" . }}'
-  export SERVICE_IP1=$(kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-dns -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  export SERVICE_IP1=$(kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-dns-tcp -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
   export SERVICE_IP2=$(kubectl {{ if .Release.Namespace }} -n {{.Release.Namespace}} {{ end }} get svc {{ template "powerdns.fullname" . }}-service-admin -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo Point your DNS client to $SERVICE_IP1:{{ .Values.powerdns.service.dns.port }}
+  echo Point your DNS client to $SERVICE_IP1:{{ .Values.powerdns.service.dns.tcp.port }}
   echo Dashboard access at http://$SERVICE_IP2:{{ .Values.powerdnsadmin.service.port }}
 {{- end }}
 
-{{- if contains "ClusterIP" .Values.powerdns.service.dns.type }}
+{{- if contains "ClusterIP" .Values.powerdns.service.dns.tcp.type }}
   export POD_NAME=$(kubectl {{- if .Release.Namespace }} -n {{.Release.Namespace}} {{ end -}} get pods -l "app={{ template "powerdns.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
   echo "Point your DNS client to 127.0.0.1:53"
   kubectl port-forward $POD_NAME 53:53
