@@ -33,7 +33,7 @@ To install the chart with the release name `my-release`:
 ```console
 helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
 helm repo update
-helm install --name my-release aecharts/powerdns
+helm install my-release aecharts/powerdns
 ```
 
 The command deploys PowerDNS on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -118,7 +118,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```console
 helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
 helm repo update
-helm install --name powerdns-release --set domain=disasterproject.com aecharts/powerdns
+helm install powerdns-release --set domain=disasterproject.com aecharts/powerdns
 ```
 
 The above command sets the domain managed by PowerDNS to `disasterproject.com`.
@@ -128,7 +128,7 @@ Alternatively, a YAML file that specifies the values for the above parameters ca
 ```console
 helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
 helm repo update
-helm install --name powerdns-release -f values.yaml aecharts/powerdns
+helm install powerdns-release -f values.yaml aecharts/powerdns
 ```
 
 ## Persistence
