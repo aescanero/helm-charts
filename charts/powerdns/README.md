@@ -8,7 +8,9 @@ PowerDNS with Mariadb and PowerDNS-Admin Helm to easy PowerDNS deploy on Kuberne
 Supported for Helm v3
 
 ```console
-$ helm install powerdns https://raw.githubusercontent.com/aescanero/helm-powerdns/master/test/powerdns.tgz
+helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
+helm repo update
+helm install aecharts/powerdns
 ```
 
 ## Introduction
@@ -29,7 +31,9 @@ It also packages:
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm install --name my-release https://raw.githubusercontent.com/aescanero/helm-powerdns/master/test/powerdns.tgz
+helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
+helm repo update
+helm install --name my-release aecharts/powerdns
 ```
 
 The command deploys PowerDNS on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -112,9 +116,9 @@ The above parameters map to the env variables defined in each container. For mor
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```console
-$ helm install --name powerdns-release \
-  --set domain=disasterproject.com \
-    https://raw.githubusercontent.com/aescanero/helm-powerdns/master/test/powerdns.tgz
+helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
+helm repo update
+helm install --name powerdns-release --set domain=disasterproject.com aecharts/powerdns
 ```
 
 The above command sets the domain managed by PowerDNS to `disasterproject.com`.
@@ -122,7 +126,9 @@ The above command sets the domain managed by PowerDNS to `disasterproject.com`.
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install --name my-release -f values.yaml https://raw.githubusercontent.com/aescanero/helm-powerdns/master/test/powerdns.tgz
+helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
+helm repo update
+helm install --name powerdns-release -f values.yaml aecharts/powerdns
 ```
 
 ## Persistence
