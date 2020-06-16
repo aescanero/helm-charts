@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  powerdns:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-06-17T00:20:51.255026804+02:00"
+    description: A Helm chart for Kubernetes
+    digest: f52d06ea08cda83869fc367f77d184028510233ce9748820cc4d711657341b19
+    name: powerdns
+    type: application
+    urls:
+    - https://github.com/aescanero/helm-charts/releases/download/powerdns-0.1.0/powerdns-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-06-17T00:20:50.658842383+02:00"
