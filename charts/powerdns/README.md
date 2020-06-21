@@ -57,10 +57,12 @@ The following table lists the configurable parameters of the PowerDNS chart and 
 |             Parameter             |              Description                   |                         Default                         |
 |-----------------------------------|--------------------------------------------|---------------------------------------------------------|
 | `powerdns.enabled`                | Deploy the DNS Server packaged with Helm   | `true`                                                  |
+| `powerdns.service.dns.tcp.enabled`| Enable DNS (TCP) Service                   | `false`                                                 |
 | `powerdns.service.dns.tcp.port`       | Port of the DNS (TCP) Service                    | `53`                                          |
 | `powerdns.service.dns.tcp.type`       | Class of the Kubernetes DNS (TCP) Service        | `LoadBalancer`                                |
 | `powerdns.service.dns.tcp.loadBalancerIP`       | Statically assign LoadBalancerIP (UDP)         | ``                                    |
 | `powerdns.service.dns.tcp.annotations`       | Annotations for service (TCP)         | ``                                                |
+| `powerdns.service.dns.udp.enabled`| Enable DNS (UDP) Service                   | `true`                                                  |
 | `powerdns.service.dns.udp.port`       | Port of the DNS (UDP) Service                    | `53`                                          |
 | `powerdns.service.dns.udp.type`       | Class of the Kubernetes DNS (UDP) Service        | `LoadBalancer`                                |
 | `powerdns.service.dns.udp.loadBalancerIP`       | Statically assign LoadBalancerIP (TCP)         | ``                                    |

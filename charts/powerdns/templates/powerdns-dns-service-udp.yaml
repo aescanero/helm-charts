@@ -1,4 +1,5 @@
 {{- if .Values.powerdns.enabled }}
+{{- if .Values.powerdns.service.udp.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -22,4 +23,5 @@ spec:
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
 {{- end }}

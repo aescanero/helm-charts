@@ -7,10 +7,12 @@ powerdns:
   service:
     dns:
       tcp:
+        enabled: false
         type: LoadBalancer
         port: 53
         annotations:
       udp:
+        enabled: true
         type: LoadBalancer
         port: 53
         annotations:
