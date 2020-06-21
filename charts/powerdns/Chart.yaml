@@ -14,8 +14,12 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
+<<<<<<< HEAD:charts/powerdns/Chart.yaml
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 version: 0.1.2
+=======
+version: 0.1.6
+>>>>>>> 1b85d578a8aa416933f6a25c611c1a1e92e0eba6:powerdns/Chart.yaml
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
