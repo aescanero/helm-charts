@@ -25,7 +25,9 @@ spec:
 {{ toYaml .Values.mariadb.resources | indent 12 }}
 {{- if .Values.mariadb.args }}
           args:
-          - {{ .Values.mariadb.args }}
+{{- range .Values.mariadb.args }}
+          - {{ . | quote }}
+{{- end }}
 {{- end }}
           env:
           - name: MYSQL_INITDB_SKIP_TZINFO

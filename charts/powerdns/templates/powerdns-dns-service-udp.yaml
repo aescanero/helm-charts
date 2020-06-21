@@ -1,5 +1,5 @@
 {{- if .Values.powerdns.enabled }}
-{{- if .Values.powerdns.service.udp.enabled }}
+{{- if .Values.powerdns.service.dns.udp.enabled }}
 apiVersion: v1
 kind: Service
 metadata:

@@ -1,5 +1,5 @@
 {{- if .Values.powerdns.enabled }}
-{{- if .Values.powerdns.service.tcp.enabled }}
+{{- if .Values.powerdns.service.dns.tcp.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
