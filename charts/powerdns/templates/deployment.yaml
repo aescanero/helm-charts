@@ -135,8 +135,11 @@ spec:
 {{- end }}
           ports:
           - containerPort: 53
-            name: dns
+            name: dns-udp
             protocol: UDP
+          - containerPort: 53
+            name: dns-tcp
+            protocol: TCP
           - containerPort: 8081
             name: api
             protocol: TCP

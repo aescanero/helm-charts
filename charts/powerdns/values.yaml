@@ -6,8 +6,16 @@ powerdns:
   enabled: true
   service:
     dns:
-      type: LoadBalancer
-      port: 53
+      tcp:
+        enabled: false
+        type: LoadBalancer
+        port: 53
+        annotations:
+      udp:
+        enabled: true
+        type: LoadBalancer
+        port: 53
+        annotations:
     api:
       type: ClusterIP
       port: 8081

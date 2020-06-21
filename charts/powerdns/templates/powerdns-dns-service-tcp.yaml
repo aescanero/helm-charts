@@ -1,0 +1,27 @@
+{{- if .Values.powerdns.enabled }}
+{{- if .Values.powerdns.service.tcp.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "powerdns.fullname" . }}-service-dns-tcp
+  labels:
+{{ include "powerdns.labels" . | indent 4 }}
+{{- with .Values.powerdns.service.dns.tcp.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.powerdns.service.dns.tcp.type }}
+  {{- if .Values.powerdns.service.dns.tcp.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.powerdns.service.dns.tcp.loadBalancerIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.powerdns.service.dns.tcp.port }}
+      targetPort: dns-tcp
+      protocol: TCP
+      name: dns-tcp
+  selector:
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+{{- end }}
