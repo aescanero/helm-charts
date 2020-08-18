@@ -1,0 +1,65 @@
+{{- if .Values.mariadb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ template "powerdns.fullname" . }}-db"
+  labels:
+    powerdns.com/role: db
+{{ include "powerdns.labels" . | indent 4 }}
+spec:
+  replicas: {{ coalesce .Values.mariadb.replicaCount 1 }}
+  selector:
+    matchLabels:
+{{ include "powerdns.labels" . | indent 6 }}
+      app.kubernetes.io/name: {{ include "powerdns.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      powerdns.com/role: db
+  template:
+    metadata:
+      labels:
+{{ include "powerdns.labels" . | indent 8 }}
+        app.kubernetes.io/name: {{ include "powerdns.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        powerdns.com/role: db
+    spec:
+      containers:
+        - name: mariadb
+          image: "{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}"
+          imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
+          resources:
+{{ toYaml .Values.mariadb.resources | indent 12 }}
+{{- if .Values.mariadb.args }}
+          args:
+{{- range .Values.mariadb.args }}
+          - {{ . | quote }}
+{{- end }}
+{{- end }}
+          env:
+          - name: MYSQL_INITDB_SKIP_TZINFO
+            value: "1"
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.fullname" . }}-secret
+                key: MYSQL_PASS
+          - name: MYSQL_DATABASE
+            value: {{ .Values.powerdns.mysql_database | quote }} 
+          - name: MYSQL_USER
+            value: {{ .Values.powerdns.mysql_user | quote }} 
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "powerdns.fullname" . }}-secret
+                key: MYSQL_PASS
+{{- if .Values.mariadb.persistence.enabled }}
+          volumeMounts:
+          - name: data
+            mountPath: /var/lib/mysql
+{{- end }}
+{{- if .Values.mariadb.persistence.enabled }}
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: "pvc-{{ template "powerdns.fullname" . }}-mariadb"
+{{- end }}
+{{ end -}}

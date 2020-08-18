@@ -1,4 +1,4 @@
-{{- if .Values.powerdnsadmin.enabled }}
+{{- if .Values.admin.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,13 +6,14 @@ metadata:
   labels:
 {{ include "powerdns.labels" . | indent 4 }}
 spec:
-  type: {{ .Values.powerdnsadmin.service.type }}
+  type: {{ .Values.admin.service.type }}
   ports:
-    - port: {{ .Values.powerdnsadmin.service.port }}
+    - port: {{ .Values.admin.service.port }}
       targetPort: pdns-admin-http
       protocol: TCP
       name: pdns-admin-http
   selector:
     app.kubernetes.io/name: {{ include "powerdns.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+    powerdns.com/role: admin
 {{- end }}

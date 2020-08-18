@@ -1,17 +1,19 @@
+{{- if .Values.mariadb.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "powerdns.fullname" . }}-service-api
+  name: {{ template "powerdns.fullname" . }}-service-db
   labels:
 {{ include "powerdns.labels" . | indent 4 }}
 spec:
-  type: {{ .Values.service.api.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.service.api.port }}
-      targetPort: api
+    - port: 3306
+      name: db
       protocol: TCP
-      name: api
+      targetPort: 3306
   selector:
     app.kubernetes.io/name: {{ include "powerdns.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    powerdns.com/role: api
+    powerdns.com/role: db
+{{ end -}}

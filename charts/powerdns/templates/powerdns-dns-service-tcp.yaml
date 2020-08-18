@@ -1,27 +1,28 @@
-{{- if .Values.powerdns.enabled }}
-{{- if .Values.powerdns.service.dns.tcp.enabled }}
+{{- if .Values.service.dns.tcp.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "powerdns.fullname" . }}-service-dns-tcp
   labels:
 {{ include "powerdns.labels" . | indent 4 }}
-{{- with .Values.powerdns.service.dns.tcp.annotations }}
+{{- with .Values.service.dns.tcp.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
 {{- end }}
+{{ template "metallb.address.pool" .  | indent 4}}
 spec:
-  type: {{ .Values.powerdns.service.dns.tcp.type }}
-  {{- if .Values.powerdns.service.dns.tcp.loadBalancerIP }}
-  loadBalancerIP: {{ .Values.powerdns.service.dns.tcp.loadBalancerIP }}
+  type: {{ .Values.service.dns.tcp.type }}
+  {{- if .Values.service.dns.tcp.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.dns.tcp.loadBalancerIP }}
   {{- end }}
   ports:
-    - port: {{ .Values.powerdns.service.dns.tcp.port }}
+    - port: {{ .Values.service.dns.tcp.port }}
       targetPort: dns-tcp
       protocol: TCP
       name: dns-tcp
   selector:
     app.kubernetes.io/name: {{ include "powerdns.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+    powerdns.com/role: api
 {{- end }}
-{{- end }}
+
