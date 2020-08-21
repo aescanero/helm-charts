@@ -2,6 +2,51 @@
 #Website: www.disasterproject.com
 #Version: 0.1
 
+enabled: true
+service:
+  dns:
+    tcp:
+      enabled: false
+      type: LoadBalancer
+      port: 53
+      annotations:
+    udp:
+      enabled: true
+      type: LoadBalancer
+      port: 53
+      annotations:
+  api:
+    type: ClusterIP
+    port: 8081
+image:
+  repository: pschiffe/pdns-mysql
+  tag: alpine
+  pullPolicy: IfNotPresent
+domain: external.local
+master: "yes"
+api: "yes"
+webserver: "yes"
+webserver_address: "0.0.0.0"
+webserver_allow_from: "0.0.0.0/0"
+version_string: "anonymous"
+default_ttl: "1500"
+soa_minimum_ttl: "1200"
+default_soa_name: "ns1.external.local"
+mysql_host: "127.0.0.1"
+mysql_database: "powerdns"
+mysql_user: "powerdns"
+requests:
+  memory: "512Mi"
+  cpu: "300m"
+limits:
+  memory: "512Mi"
+  cpu: "300m"
+
+apikey: foobarbaz
+
+metallb:
+  address_pool: default
+
 powerdns:
   enabled: true
   service:
@@ -33,7 +78,7 @@ powerdns:
   default_ttl: "1500"
   soa_minimum_ttl: "1200"
   default_soa_name: "ns1.external.local"
-  mysql_host: "127.0.0.1"
+  # mysql_host: "127.0.0.1"
   mysql_database: "powerdns"
   mysql_user: "powerdns"
   requests:
@@ -43,6 +88,9 @@ powerdns:
     memory: "512Mi"
     cpu: "300m"
 
+
+
+
 mariadb:
   enabled: true
   image:
@@ -50,11 +98,11 @@ mariadb:
     tag: latest
     pullPolicy: IfNotPresent
   persistence:
-    enabled: true
+    enabled: false
     accessMode: 'ReadWriteOnce'
     size: '1Gi'
   args: 
-    - --bind-address=127.0.0.1
+    - --bind-address=0.0.0.0
     - --innodb_use_native_aio=0
     - --innodb_flush_method=fsync
   requests:
@@ -63,8 +111,9 @@ mariadb:
   limits:
     memory: "512Mi"
     cpu: "300m"
+  mysql_pass: changeme
 
-powerdnsadmin:
+admin:
   enabled: true
   service:
     type: LoadBalancer
@@ -76,7 +125,7 @@ powerdnsadmin:
   proto: "http"
   powerdns_host: "127.0.0.1"
   powerdns_port: "8081"
-  mysql_host: "127.0.0.1"
+  mysql_host: powerdns-db
   mysql_database: "powerdns"
   mysql_user: "powerdns"
   ingress:
@@ -90,6 +139,7 @@ powerdnsadmin:
   limits:
     memory: "512Mi"
     cpu: "300m"
+  secret: changeme
 
 nameOverride: ""
 fullnameOverride: ""

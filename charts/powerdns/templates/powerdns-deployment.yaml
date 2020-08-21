@@ -1,0 +1,103 @@
+{{- $db_host := coalesce .Values.powerdns.mysql_host (printf "%s-service-db" (include "powerdns.fullname" . )) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ template "powerdns.fullname" . }}"
+  labels:
+{{ include "powerdns.labels" . | indent 4 }}
+    powerdns.com/role: api
+spec:
+  replicas: {{ default .Values.replicaCount 1 }}
+  selector:
+    matchLabels:
+{{ include "powerdns.labels" . | indent 6 }}
+      app.kubernetes.io/name: {{ include "powerdns.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      powerdns.com/role: api
+  template:
+    metadata:
+      labels:
+{{ include "powerdns.labels" . | indent 8 }}
+        app.kubernetes.io/name: {{ include "powerdns.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        powerdns.com/role: api
+    spec:
+      containers:
+        - name: powerdns
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "pdnsutil list-zone {{ .Values.domain }}"]
+          readinessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "nc -vz {{ $db_host }} 3306"]
+            initialDelaySeconds: 20
+          lifecycle:
+            postStart:
+              exec:
+                command: 
+                - "/bin/sh"
+                - "-c"
+                - "a=0;while [ $a -lt 200 ];do sleep 1;a=$[a+1];echo 'stage: '$a;if nc -vz {{ $db_host }} 3306;then (! pdnsutil list-zone {{ .Values.powerdns.domain }}) && pdnsutil create-zone {{ .Values.powerdns.domain }};echo 'End Stage';a=200;fi;done"
+          resources:
+{{ toYaml .Values.powerdns.resources | indent 12 }}
+          env:
+          - name: PDNS_api_key
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "powerdns.fullname" . }}-secret"
+                key: PDNS_APIKEY
+          - name: PDNS_master
+            value: {{ .Values.powerdns.master | quote}}
+          - name: PDNS_api
+            value: {{ .Values.powerdns.api | quote }}
+          - name: PDNS_webserver
+            value: {{ .Values.powerdns.webserver | quote }}
+          - name: PDNS_webserver_address
+            value: {{ .Values.powerdns.webserver_address | quote }}
+          - name: PDNS_webserver_allow_from
+            value: {{ .Values.powerdns.webserver_allow_from | quote }}
+          - name: PDNS_webserver_password
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "powerdns.fullname" . }}-secret"
+                key: PDNS_APIKEY
+          - name: PDNS_version_string
+            value: {{ .Values.powerdns.version_string | quote }}
+          - name: PDNS_default_ttl
+            value: {{ .Values.powerdns.default_ttl | quote }}
+          - name: PDNS_soa_minimum_ttl
+            value: {{ .Values.powerdns.soa_minimum_ttl | quote }}
+          - name: PDNS_default_soa_name
+            value: "ns1.{{ .Values.powerdns.domain }}"
+          - name: PDNS_default_soa_mail
+            value: "hostmaster.{{ .Values.powerdns.domain }}"
+          - name: PDNS_innodb_read_committed
+            value: "no"
+          - name: MYSQL_ENV_MYSQL_HOST
+            value: {{ quote $db_host }}
+          - name: MYSQL_ENV_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "powerdns.fullname" . }}-secret"
+                key: MYSQL_PASS
+          - name: MYSQL_ENV_MYSQL_DATABASE
+            value: {{ .Values.powerdns.mysql_database | quote }} 
+          - name: MYSQL_ENV_MYSQL_USER
+            value: {{ .Values.powerdns.mysql_user | quote }} 
+          - name: MYSQL_ENV_MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "powerdns.fullname" . }}-secret"
+                key: MYSQL_PASS
+          ports:
+          - containerPort: 53
+            name: dns-udp
+            protocol: UDP
+          - containerPort: 53
+            name: dns-tcp
+            protocol: TCP
+          - containerPort: 8081
+            name: api
+            protocol: TCP

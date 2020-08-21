@@ -1,0 +1,67 @@
+{{- if .Values.admin.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ template "powerdns.fullname" . }}-admin"
+  labels:
+    powerdns.com/role: admin
+{{ include "powerdns.labels" . | indent 4 }}
+spec:
+  replicas: {{ default .Values.replicaCount 1 }}
+  selector:
+    matchLabels:
+{{ include "powerdns.labels" . | indent 6 }}
+      app.kubernetes.io/name: {{ include "powerdns.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      powerdns.com/role: admin
+  template:
+    metadata:
+      labels:
+{{ include "powerdns.labels" . | indent 8 }}
+        app.kubernetes.io/name: {{ include "powerdns.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        powerdns.com/role: admin
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-powerdnsadmin
+          image: "{{ .Values.admin.image.repository }}:{{ .Values.admin.image.tag }}"
+          imagePullPolicy: {{ .Values.admin.image.pullPolicy }}
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "nc -vz 127.0.0.1 9191 2>/dev/null"]
+            initialDelaySeconds: 80
+          resources:
+{{ toYaml .Values.admin.resources | indent 12 }}
+          env:
+          - name: PDNS_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "powerdns.fullname" . }}-secret"
+                key: PDNS_APIKEY
+          - name: PDNSADMIN_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "powerdns.fullname" . }}-secret"
+                key: PDNSADMIN_SECRET
+          - name: PDNS_PROTO
+            value: {{ .Values.admin.proto | quote }} 
+          - name: PDNS_HOST
+            value: {{ template "powerdns.fullname" . }}-service-api
+          - name: PDNS_PORT
+            value: {{ .Values.admin.powerdns_port | quote }} 
+          - name: PDNSADMIN_SQLA_DB_HOST
+            value: {{ template "powerdns.fullname" . }}-service-db
+          - name: PDNSADMIN_SQLA_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "powerdns.fullname" . }}-secret"
+                key: MYSQL_PASS
+          - name: PDNSADMIN_SQLA_DB_NAME
+            value: {{ .Values.admin.mysql_database | quote }} 
+          - name: PDNSADMIN_SQLA_DB_USER
+            value: {{ .Values.admin.mysql_user | quote }} 
+          ports:
+          - containerPort: 9191
+            name: pdns-admin-http
+            protocol: TCP
+{{- end }}
