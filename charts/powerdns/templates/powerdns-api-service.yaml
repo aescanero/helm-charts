@@ -4,8 +4,15 @@ metadata:
   name: {{ template "powerdns.fullname" . }}-service-api
   labels:
 {{ include "powerdns.labels" . | indent 4 }}
+{{- with .Values.service.api.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
 spec:
   type: {{ .Values.service.api.type }}
+  {{- if .Values.service.api.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.api.loadBalancerIP }}
+  {{- end }}
   ports:
     - port: {{ .Values.service.api.port }}
       targetPort: api
