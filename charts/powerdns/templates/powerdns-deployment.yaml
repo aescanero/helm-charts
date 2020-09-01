@@ -36,7 +36,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: 
+                command:
                 - "/bin/sh"
                 - "-c"
                 - "a=0;while [ $a -lt 200 ];do sleep 1;a=$[a+1];echo 'stage: '$a;if nc -vz {{ $db_host }} 3306;then (! pdnsutil list-zone {{ .Values.powerdns.domain }}) && pdnsutil create-zone {{ .Values.powerdns.domain }};echo 'End Stage';a=200;fi;done"
@@ -73,7 +73,7 @@ spec:
             value: "ns1.{{ .Values.powerdns.domain }}"
           - name: PDNS_default_soa_mail
             value: "hostmaster.{{ .Values.powerdns.domain }}"
-          - name: PDNS_innodb_read_committed
+          - name: PDNS_gmysql_innodb_read_committed
             value: "no"
           - name: MYSQL_ENV_MYSQL_HOST
             value: {{ quote $db_host }}
@@ -83,9 +83,9 @@ spec:
                 name: "{{ template "powerdns.fullname" . }}-secret"
                 key: MYSQL_PASS
           - name: MYSQL_ENV_MYSQL_DATABASE
-            value: {{ .Values.powerdns.mysql_database | quote }} 
+            value: {{ .Values.powerdns.mysql_database | quote }}
           - name: MYSQL_ENV_MYSQL_USER
-            value: {{ .Values.powerdns.mysql_user | quote }} 
+            value: {{ .Values.powerdns.mysql_user | quote }}
           - name: MYSQL_ENV_MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
