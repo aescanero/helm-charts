@@ -1,6 +1,6 @@
 #Author: aescanero@disasterproject.com
 #Website: www.disasterproject.com
-#Version: 0.1
+#Version: 0.3
 
 enabled: true
 service:
@@ -25,23 +25,10 @@ image:
 domain: external.local
 master: "yes"
 api: "yes"
-webserver: "yes"
-webserver_address: "0.0.0.0"
-webserver_allow_from: "0.0.0.0/0"
 version_string: "anonymous"
 default_ttl: "1500"
 soa_minimum_ttl: "1200"
 default_soa_name: "ns1.external.local"
-mysql_host: "127.0.0.1"
-mysql_database: "powerdns"
-mysql_user: "powerdns"
-requests:
-  memory: "512Mi"
-  cpu: "300m"
-limits:
-  memory: "512Mi"
-  cpu: "300m"
-
 apikey: foobarbaz
 
 metallb:
@@ -49,21 +36,6 @@ metallb:
 
 powerdns:
   enabled: true
-  service:
-    dns:
-      tcp:
-        enabled: false
-        type: LoadBalancer
-        port: 53
-        annotations:
-      udp:
-        enabled: true
-        type: LoadBalancer
-        port: 53
-        annotations:
-    api:
-      type: ClusterIP
-      port: 8081
   image:
     repository: pschiffe/pdns-mysql
     tag: alpine
@@ -78,7 +50,7 @@ powerdns:
   default_ttl: "1500"
   soa_minimum_ttl: "1200"
   default_soa_name: "ns1.external.local"
-  # mysql_host: "127.0.0.1"
+  mysql_host: "127.0.0.1"
   mysql_database: "powerdns"
   mysql_user: "powerdns"
   requests:
@@ -87,9 +59,6 @@ powerdns:
   limits:
     memory: "512Mi"
     cpu: "300m"
-
-
-
 
 mariadb:
   enabled: true
