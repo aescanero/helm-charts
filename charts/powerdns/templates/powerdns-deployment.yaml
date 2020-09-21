@@ -73,8 +73,8 @@ spec:
             value: "ns1.{{ .Values.powerdns.domain }}"
           - name: PDNS_default_soa_mail
             value: "hostmaster.{{ .Values.powerdns.domain }}"
-          - name: PDNS_innodb_read_committed
-            value: "no"
+          - name: PDNS_gmysql_innodb_read_committed
+            value: {{ .Values.powerdns.innodb_read_committed | quote }}
           - name: MYSQL_ENV_MYSQL_HOST
             value: {{ quote $db_host }}
           - name: MYSQL_ENV_MYSQL_PASSWORD

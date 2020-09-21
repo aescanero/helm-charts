@@ -3,12 +3,12 @@ entries:
   powerdns:
   - apiVersion: v2
     appVersion: 4.3.4
-    created: "2020-09-19T00:56:49.119772733+02:00"
+    created: "2020-09-21T02:13:05.473480795+02:00"
     description: A Helm chart for Kubernetes
-    digest: 3acf1bda0bd8e4986024f0bc59d53f8aeaaa86329323652ebe5514f8d0b75f9a
+    digest: 733d470f02ee87e3ffb3b06c992cbcf2ea5fdaae25d6b5605cf477dadd052cc8
     name: powerdns
     type: application
     urls:
-    - https://github.com/aescanero/helm-charts/releases/download/powerdns-0.1.9/powerdns-0.1.9.tgz
-    version: 0.1.9
-generated: "2020-09-19T00:56:48.761672309+02:00"
+    - https://github.com/aescanero/helm-charts/releases/download/powerdns-0.1.11/powerdns-0.1.11.tgz
+    version: 0.1.11
+generated: "2020-09-21T02:13:05.137707494+02:00"

@@ -53,6 +53,7 @@ powerdns:
   mysql_host: "127.0.0.1"
   mysql_database: "powerdns"
   mysql_user: "powerdns"
+  innodb_read_committed: "no"
   requests:
     memory: "512Mi"
     cpu: "300m"
