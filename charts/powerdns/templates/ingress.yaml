@@ -5,26 +5,26 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
-{{- if eq .Values.admin.ingress.class "traefik" }}
+{{- if eq .Values.admin.ingress.type "traefik" }}
   annotations:
-    kubernetes.io/ingress.class: traefik
+    kubernetes.io/ingress.type: traefik
     traefik.ingress.kubernetes.io/frontend-entry-points: http,https
     traefik.ingress.kubernetes.io/redirect-entry-point: https
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
 {{- end }}
-{{- if eq .Values.admin.ingress.class "nginx" }}
+{{- if eq .Values.admin.ingress.type "nginx" }}
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: {{ .Values.admin.ingress.class}}
 {{- end }}
 spec:
   rules:
-    - host: {{ .Values.admin.ingress.hostname }}.{{ .Values.powerdns.domain }}
+    - host: {{ .Values.admin.ingress.hostname }}.{{ .Values.domain }}
       http:
         paths:
           - path: {{ .Values.admin.ingress.path | quote }}
             backend:
               service:
-                name: {{ $fullName }}-service-admin
+                name: {{ $fullName }}-service
                 port: 
                   number: {{ $svcPort }}
 {{- end }}
