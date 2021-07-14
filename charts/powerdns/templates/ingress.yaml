@@ -23,6 +23,7 @@ spec:
         paths:
           - path: {{ .Values.admin.ingress.path | quote }}
             backend:
-              serviceName: {{ $fullName }}-service-admin
-              servicePort: {{ $svcPort }}
+              service:
+                name: {{ $fullName }}-service-admin
+                port: {{ $svcPort }}
 {{- end }}
