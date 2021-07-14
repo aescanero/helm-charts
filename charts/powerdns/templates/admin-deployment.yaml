@@ -1,6 +1,6 @@
 {{- if .Values.admin.enabled }}
-{{- $powerdns_host := ternary .Values.admin.powerdns_host (printf "%s-service-api" (include "powerdns.fullname" . )) .Values.enabled -}}
-{{- $mysql_host := ternary .Values.admin.mysql_host (printf "%s-service-db" (include "powerdns.fullname" . )) .Values.mariadb.enabled -}}
+{{- $powerdns_host := ternary (printf "%s-service-api" (include "powerdns.fullname" . )) .Values.admin.powerdns_host .Values.enabled -}}
+{{- $mysql_host := ternary (printf "%s-service-db" (include "powerdns.fullname" . )) .Values.admin.mysql_host .Values.mariadb.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
