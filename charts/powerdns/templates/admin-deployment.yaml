@@ -1,4 +1,6 @@
 {{- if .Values.admin.enabled }}
+{{- $powerdns_host := ternary .Values.admin.powerdns_host (printf "%s-service-api" (include "powerdns.fullname" . )) .Values.enabled -}}
+{{- $mysql_host := ternary .Values.admin.mysql_host (printf "%s-service-db" (include "powerdns.fullname" . )) .Values.mariadb.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -46,11 +48,11 @@ spec:
           - name: PDNS_PROTO
             value: {{ .Values.admin.proto | quote }} 
           - name: PDNS_HOST
-            value: {{- $env := ternary .Values.admin.powerdns_host (printf "%s-service-api" (include "powerdns.fullname" . )) .Values.enabled -}}
+            value: {{ quote $powerdns_host }}
           - name: PDNS_PORT
             value: {{ .Values.admin.powerdns_port | quote }} 
           - name: PDNSADMIN_SQLA_DB_HOST
-            value: {{- $env := ternary .Values.admin.mysql_host (printf "%s-service-db" (include "powerdns.fullname" . )) .Values.mariadb.enabled -}}
+            value: {{ quote $mysql_host }}
           - name: PDNSADMIN_SQLA_DB_PASSWORD
             valueFrom:
               secretKeyRef:
