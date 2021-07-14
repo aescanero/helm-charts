@@ -25,5 +25,6 @@ spec:
             backend:
               service:
                 name: {{ $fullName }}-service-admin
-                port: {{ $svcPort }}
+                port: 
+                  number: {{ $svcPort }}
 {{- end }}
