@@ -86,7 +86,7 @@ The following table lists the configurable parameters of the PowerDNS chart and 
 | `powerdns.mysql_database`         | Name of the external database              | `powerdns`                                              |
 | `powerdns.mysql_user`             | User of the external database              | `powerdns`                                              |
 | `powerdns.mysql_rootpass`         | Password of the root user of external BD   | `nil`                                                   |
-| `powerdns.mysql_pass`             | Password of the user                       | `nil`                                                   |
+| `powerdns.mysql_pass`             | Password of the user (admin standalone must set this too)| `nil`                                     |
 | `powerdns.innodb_read_committed`  | Set powerdns option gmysql-innodb-read-commited              | `no`                                              |
 | `powerdns.resources`              | CPU/Memory resource requests/limits        | Memory: `512Mi`, CPU: `300m`                            |
 | `mariadb.enabled`                 | Deploy the Database packaged with Helm     | `true`                                                  |
@@ -108,14 +108,15 @@ The following table lists the configurable parameters of the PowerDNS chart and 
 | `powerdnsadmin.image.tag`         | PowerDNS-Admin image tag                   | `latest`                                                |
 | `powerdnsadmin.image.pullPolicy`  | Image pull policy                          | `IfNotPresent`                                          |
 | `powerdnsadmin.proto`             | Protocol of PowerDNS-Admin Service         | `http`                                                  |
-| `powerdnsadmin.powerdns_host`     | Where is PowerDNS Service                  | `127.0.0.1`                                             |
+| `powerdnsadmin.powerdns_host`     | Where is PowerDNS Service (only used if enabled = false)| `127.0.0.1`                                |
 | `powerdnsadmin.powerdns_port`     | Port of the PowerDNS API Service           | `8081`                                                  |
 | `powerdnsadmin.mysql_host`        | Host of the external database              | `127.0.0.1`                                             |
-| `powerdnsadmin.mysql_database`    | Name of the external database              | `powerdns`                                              |
+| `powerdnsadmin.mysql_database`    | Name of the external database (only used if mariadb.enabled = false)| `powerdns`                     |
 | `powerdnsadmin.mysql_user`        | User of the external database              | `powerdns`                                              |
 | `powerdnsadmin.mysql_pass`        | Password of the user                       | `nil`                                                   |
 | `powerdnsadmin.resources`         | CPU/Memory resource requests/limits        | Memory: `512Mi`, CPU: `300m`                            |
 | `powerdnsadmin.ingress.enabled`   | Deploy the Dashboard with Ingress          | `false`                                                 |
+| `powerdnsadmin.ingress.type`      | Type of ingress (traeffik or nginx)        | `nil`                                                   |
 | `powerdnsadmin.ingress.class`     | Class of Ingress                           | `traefik`                                               |
 | `powerdnsadmin.ingress.hostname`  | Hostname without domain part               | `powerdns-admin`                                        |
 | `powerdnsadmin.ingress.path`      | Path within the url structure              | `/`                                                     |
