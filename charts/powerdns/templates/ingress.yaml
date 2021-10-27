@@ -27,4 +27,5 @@ spec:
                 name: {{ $fullName }}-service
                 port: 
                   number: {{ $svcPort }}
+            pathType: ImplementationSpecific
 {{- end }}
