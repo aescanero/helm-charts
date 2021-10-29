@@ -24,7 +24,7 @@ spec:
           - path: {{ .Values.admin.ingress.path | quote }}
             backend:
               service:
-                name: {{ $fullName }}-service
+                name: {{ $fullName }}-service-admin
                 port: 
                   number: {{ $svcPort }}
             pathType: ImplementationSpecific
