@@ -6,7 +6,7 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   annotations:
-{{ toYaml . | indent 4 }}
+    kubernetes.io/ingress.class: {{ .Values.admin.ingress.class}}
 {{- end }}
 spec:
   rules:
