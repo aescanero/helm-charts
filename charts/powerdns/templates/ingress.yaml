@@ -5,16 +5,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
-{{- if eq .Values.admin.ingress.type "traefik" }}
   annotations:
-    kubernetes.io/ingress.type: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
-    traefik.ingress.kubernetes.io/redirect-entry-point: https
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
-{{- end }}
-{{- if eq .Values.admin.ingress.type "nginx" }}
-  annotations:
-    kubernetes.io/ingress.class: {{ .Values.admin.ingress.class}}
+{{ toYaml . | indent 4 }}
 {{- end }}
 spec:
   rules:
