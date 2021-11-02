@@ -5,6 +5,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+{{- if eq .Values.admin.ingress.type "nginx" }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.admin.ingress.class}}
 {{- end }}
