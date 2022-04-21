@@ -103,6 +103,7 @@ admin:
     class: "traefik"
     path: "/"
     hostname: "powerdns-admin"
+    cluster-issuer: ""
   requests:
     memory: "512Mi"
     cpu: "300m"
