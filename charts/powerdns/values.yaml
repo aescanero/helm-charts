@@ -99,7 +99,6 @@ admin:
   mysql_database: "powerdns"
   mysql_user: "powerdns"
   ingress:
-    type: "nginx"
     enabled: "false"
     class: "traefik"
     path: "/"
