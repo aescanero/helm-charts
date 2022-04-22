@@ -99,11 +99,12 @@ admin:
   mysql_database: "powerdns"
   mysql_user: "powerdns"
   ingress:
+    type: "nginx"
     enabled: "false"
     class: "traefik"
     path: "/"
     hostname: "powerdns-admin"
-    cluster-issuer: ""
+    annotations: [] # annotation style is ["annotation-1: target of annotation", "annotation-2: target of annotation"]
   requests:
     memory: "512Mi"
     cpu: "300m"

@@ -8,8 +8,8 @@ metadata:
 {{- if eq .Values.admin.ingress.type "nginx" }}
   annotations:
     kubernetes.io/ingress.class: {{ .Values.admin.ingress.class}}
-  {{- if ne .Values.admin.ingress.cluster-issuer "" }}
-    cert-manager.io/cluster-issuer: {{ .Values.admin.ingress.cluster-issuer }}
+  {{- range .Values.admin.ingress.annotations }}
+    {{ . }}
   {{- end }}
 {{- end }}
 spec:
