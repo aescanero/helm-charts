@@ -103,6 +103,7 @@ admin:
     class: "traefik"
     path: "/"
     hostname: "powerdns-admin"
+    annotations: [] # annotation style is ["annotation-1: target of annotation", "annotation-2: target of annotation"]
   requests:
     memory: "512Mi"
     cpu: "300m"
