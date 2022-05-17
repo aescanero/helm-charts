@@ -13,6 +13,12 @@ metadata:
   {{- end }}
 {{- end }}
 spec:
+{{- if eq .Values.admin.ingress.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.admin.ingress.hostname }}.{{ .Values.domain }}
+    secretName: {{ .Values.admin.ingress.tls.secret}}
+{{- end }}
   rules:
     - host: {{ .Values.admin.ingress.hostname }}.{{ .Values.domain }}
       http:

@@ -104,6 +104,9 @@ admin:
     path: "/"
     hostname: "powerdns-admin"
     annotations: [] # annotation style is ["annotation-1: target of annotation", "annotation-2: target of annotation"]
+    tls:
+      enabled: false
+      secret: powerdns-admin-tls
   requests:
     memory: "512Mi"
     cpu: "300m"
