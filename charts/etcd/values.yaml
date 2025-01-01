@@ -1,0 +1,84 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: gcr.io/etcd-development/etcd
+  tag: v3.5.9
+  pullPolicy: IfNotPresent 
+
+replicas: 3
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 10Gi
+
+service:
+  type: ClusterIP
+  clientPort: 2379
+  peerPort: 2380
+
+tls:
+  enabled: false
+  # Usar cert-manager para generar certificados
+  certManager:
+    enabled: false
+    issuerRef:
+      name: ""
+      kind: ClusterIssuer
+    dnsNames: []
+    
+  # Usar secretos existentes
+  existingSecrets:
+    enabled: false
+    server:
+      secretName: ""
+      certFile: tls.crt
+      keyFile: tls.key
+      caFile: ca.crt
+    peer:
+      secretName: ""
+      certFile: tls.crt
+      keyFile: tls.key
+      caFile: ca.crt
+
+configuration:
+  initialClusterState: new
+  initialClusterToken: etcd-cluster-1
+  autoCompactionRetention: "1"
+  quotaBackendBytes: "8589934592"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # Annotations to add to the service account
+  annotations: {}
+
+auth:
+  enabled: true
+  # Opcionalmente establece una contraseña root específica
+  rootPassword: "root-password"
+  # O usa un secreto existente
+  # existingSecret: "mi-secreto-existente"
+  
+  # Configura usuarios adicionales
+  users: []
+    # - name: readonly
+    #   password: "password-readonly"
+    #   roles: 
+    #     - readonly
+    # - name: admin
+    #   password: "password-admin"
+    #   roles:
+    #     - readwrite

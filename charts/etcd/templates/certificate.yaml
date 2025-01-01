@@ -1,0 +1,53 @@
+{{- if and .Values.tls.enabled .Values.tls.certManager.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "etcd.fullname" . }}-server
+  labels:
+    {{- include "etcd.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "etcd.fullname" . }}-server-tls
+  issuerRef:
+    name: {{ .Values.tls.certManager.issuerRef.name }}
+    kind: {{ .Values.tls.certManager.issuerRef.kind }}
+  dnsNames:
+    {{- if .Values.tls.certManager.dnsNames }}
+    {{- toYaml .Values.tls.certManager.dnsNames | nindent 4 }}
+    {{- else }}
+    - {{ include "etcd.fullname" . }}
+    - {{ include "etcd.fullname" . }}.{{ .Release.Namespace }}
+    - {{ include "etcd.fullname" . }}.{{ .Release.Namespace }}.svc
+    - "*.{{ include "etcd.fullname" . }}"
+    - "*.{{ include "etcd.fullname" . }}.{{ .Release.Namespace }}"
+    - "*.{{ include "etcd.fullname" . }}.{{ .Release.Namespace }}.svc"
+    {{- end }}
+  usages:
+    - server auth
+    - client auth
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "etcd.fullname" . }}-peer
+  labels:
+    {{- include "etcd.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "etcd.fullname" . }}-peer-tls
+  issuerRef:
+    name: {{ .Values.tls.certManager.issuerRef.name }}
+    kind: {{ .Values.tls.certManager.issuerRef.kind }}
+  dnsNames:
+    {{- if .Values.tls.certManager.dnsNames }}
+    {{- toYaml .Values.tls.certManager.dnsNames | nindent 4 }}
+    {{- else }}
+    - {{ include "etcd.fullname" . }}
+    - {{ include "etcd.fullname" . }}.{{ .Release.Namespace }}
+    - {{ include "etcd.fullname" . }}.{{ .Release.Namespace }}.svc
+    - "*.{{ include "etcd.fullname" . }}"
+    - "*.{{ include "etcd.fullname" . }}.{{ .Release.Namespace }}"
+    - "*.{{ include "etcd.fullname" . }}.{{ .Release.Namespace }}.svc"
+    {{- end }}
+  usages:
+    - server auth
+    - client auth
+{{- end }}

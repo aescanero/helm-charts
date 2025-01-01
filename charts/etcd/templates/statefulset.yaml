@@ -1,0 +1,143 @@
+# templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "etcd.fullname" . }}
+  labels:
+    {{- include "etcd.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "etcd.fullname" . }}-headless
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      {{- include "etcd.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "etcd.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "etcd.serviceAccountName" . }}
+      volumes:
+      {{- if .Values.auth.enabled }}
+        - name: auth-setup
+          configMap:
+            name: {{ include "etcd.fullname" . }}-auth-setup
+            defaultMode: 0755
+      {{- end }}
+      {{- if .Values.tls.enabled }}
+        {{- if .Values.tls.existingSecrets.enabled }}
+        - name: server-tls
+          secret:
+            secretName: {{ .Values.tls.existingSecrets.server.secretName }}
+        - name: peer-tls
+          secret:
+            secretName: {{ .Values.tls.existingSecrets.peer.secretName }}
+        {{- else if .Values.tls.certManager.enabled }}
+        - name: server-tls
+          secret:
+            secretName: {{ include "etcd.fullname" . }}-server-tls
+        - name: peer-tls
+          secret:
+            secretName: {{ include "etcd.fullname" . }}-peer-tls
+        {{- end }}
+      {{- end }}
+      containers:
+      {{- if .Values.auth.enabled }}
+      - name: auth-setup
+        image: "docker.io/aescanero/etcdctl:v0.0.1"
+        command: ["/bin/sh"]
+        args: ['/scripts/setup.sh']
+        env:
+        - name: ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.auth.existingSecret | default (printf "%s-auth" (include "etcd.fullname" .)) }}
+              key: root-password
+        {{- $root := . }}
+        {{- range .Values.auth.users }}
+        - name: USER_{{ .name | upper }}_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "etcd.fullname" $root }}-auth
+              key: {{ .name }}-password
+        {{- end }}
+        volumeMounts:
+        - name: auth-setup
+          mountPath: /scripts
+          readOnly: true
+      {{- end }}
+      - name: etcd
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.clientPort }}
+          name: client
+        - containerPort: {{ .Values.service.peerPort }}
+          name: peer
+        env:
+        {{- if .Values.tls.enabled }}
+        - name: ETCD_CERT_FILE
+          value: "/etc/etcd/server-tls/{{ .Values.tls.existingSecrets.server.certFile }}"
+        - name: ETCD_KEY_FILE
+          value: "/etc/etcd/server-tls/{{ .Values.tls.existingSecrets.server.keyFile }}"
+        - name: ETCD_TRUSTED_CA_FILE
+          value: "/etc/etcd/server-tls/{{ .Values.tls.existingSecrets.server.caFile }}"
+        - name: ETCD_PEER_CERT_FILE
+          value: "/etc/etcd/peer-tls/{{ .Values.tls.existingSecrets.peer.certFile }}"
+        - name: ETCD_PEER_KEY_FILE
+          value: "/etc/etcd/peer-tls/{{ .Values.tls.existingSecrets.peer.keyFile }}"
+        - name: ETCD_PEER_TRUSTED_CA_FILE
+          value: "/etc/etcd/peer-tls/{{ .Values.tls.existingSecrets.peer.caFile }}"
+        - name: ETCD_CLIENT_CERT_AUTH
+          value: "true"
+        - name: ETCD_PEER_CLIENT_CERT_AUTH
+          value: "true"
+        {{- end }}
+        - name: ETCD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ETCD_INITIAL_CLUSTER_STATE
+          value: {{ .Values.configuration.initialClusterState }}
+        - name: ETCD_INITIAL_CLUSTER_TOKEN
+          value: {{ .Values.configuration.initialClusterToken }}
+        - name: ETCD_INITIAL_CLUSTER
+          value: "{{ range $i, $e := until (int .Values.replicas) }}{{ if $i }},{{end}}{{ include "etcd.fullname" $ }}-{{ $i }}=http://{{ include "etcd.fullname" $ }}-{{ $i }}.{{ include "etcd.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.cluster.local:{{ $.Values.service.peerPort }}{{ end }}"
+        - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+          value: http://$(ETCD_NAME).{{ include "etcd.fullname" . }}-headless.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.peerPort }}
+        - name: ETCD_LISTEN_PEER_URLS
+          value: http://0.0.0.0:{{ .Values.service.peerPort }}
+        - name: ETCD_ADVERTISE_CLIENT_URLS
+          value: http://$(ETCD_NAME).{{ include "etcd.fullname" . }}-headless.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.clientPort }}
+        - name: ETCD_LISTEN_CLIENT_URLS
+          value: http://0.0.0.0:{{ .Values.service.clientPort }}
+        - name: ETCD_AUTO_COMPACTION_RETENTION
+          value: {{ .Values.configuration.autoCompactionRetention | quote }}
+        - name: ETCD_QUOTA_BACKEND_BYTES
+          value: {{ .Values.configuration.quotaBackendBytes | quote }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+        - name: data
+          mountPath: /var/run/etcd
+        {{- if .Values.tls.enabled }}
+        - name: server-tls
+          mountPath: /etc/etcd/server-tls
+          readOnly: true
+        - name: peer-tls
+          mountPath: /etc/etcd/peer-tls
+          readOnly: true
+        {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.persistence.storageClass }}
+      storageClassName: {{ .Values.persistence.storageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size }}
+  {{- end }}
