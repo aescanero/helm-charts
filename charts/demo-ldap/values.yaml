@@ -18,13 +18,13 @@ service:
 
 persistence:
   enabled: true
-  storageClass: "gp3"  # StorageClass por defecto para todos los PVCs
+  storageClass: ""
   varLdap:
-    storageClass: ""    # Si se deja vacío, usará el valor de persistence.storageClass
+    storageClass: ""
     accessMode: ReadWriteOnce
     size: 1Gi
   ldap:
-    storageClass: ""    # Si se deja vacío, usará el valor de persistence.storageClass
+    storageClass: ""
     accessMode: ReadWriteOnce
     size: 1Gi
 
@@ -63,5 +63,4 @@ secrets:
     name: "ldap-admin-secret"  # Nombre del secret que contiene el passfile
     passwordKey: "password"    # Clave dentro del secret que contiene el password
 
-nodeSelector:
-  "eks.amazonaws.com/nodegroup": "infra"
+nodeSelector: {}
