@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-ldap-cert
+spec:
+  commonName: {{ .Release.Name }}-ldap.{{ .Release.Namespace }}.svc.cluster.local
+  dnsNames:
+  - '{{ .Release.Name }}-ldap.{{ .Release.Namespace }}.svc.cluster.local'
+  isCA: false
+  issuerRef:
+    group: {{ .Values.certManager.issuerRef.group }}
+    kind: {{ .Values.certManager.issuerRef.kind }}
+    name: {{ .Values.certManager.issuerRef.name }}
+  privateKey:
+    algorithm: {{ .Values.certManager.privateKey.algorithm }}
+    size: {{ .Values.certManager.privateKey.size }}
+  secretName: {{ .Release.Name }}-ldap-cert

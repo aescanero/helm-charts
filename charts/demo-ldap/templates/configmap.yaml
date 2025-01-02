@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-ldap-config
+data:
+  ldap.yaml: |
+    srvconfig:
+      debug: {{ .Values.ldapConfig.debug | quote }}
+      adminpasswordfile: {{ .Values.ldapConfig.adminpasswordfile }}
+      ldapport: {{ .Values.ldapConfig.ldapport | quote }}
+      srvtls:
+        ldapsport: {{ .Values.ldapConfig.srvtls.ldapsport | quote }}
+        ldapstls:
+          cafile: {{ .Values.ldapConfig.srvtls.ldapstls.cafile }}
+          crtfile: {{ .Values.ldapConfig.srvtls.ldapstls.crtfile }}
+          crtkeyfile: {{ .Values.ldapConfig.srvtls.ldapstls.crtkeyfile }}
+    database:
+      {{- toYaml .Values.ldapConfig.database | nindent 6 }}
+    schemas:
+      {{- toYaml .Values.ldapConfig.schemas | nindent 6 }}
+    modules:
+      {{- toYaml .Values.ldapConfig.modules | nindent 6 }}

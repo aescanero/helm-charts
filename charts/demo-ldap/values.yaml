@@ -1,0 +1,67 @@
+image:
+  repository: docker.io/aescanero/openldap-node
+  tag: 0.1.3-linux-amd64
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9090
+    - name: ldap
+      port: 1389
+      targetPort: 1389
+    - name: ldaps
+      port: 1686
+      targetPort: 1686
+
+persistence:
+  enabled: true
+  storageClass: "gp3"  # StorageClass por defecto para todos los PVCs
+  varLdap:
+    storageClass: ""    # Si se deja vacío, usará el valor de persistence.storageClass
+    accessMode: ReadWriteOnce
+    size: 1Gi
+  ldap:
+    storageClass: ""    # Si se deja vacío, usará el valor de persistence.storageClass
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+# Configuración LDAP
+ldapConfig:
+  debug: "256"
+  adminpasswordfile: /config/passfile
+  ldapport: "1389"
+  srvtls:
+    ldapsport: "1686"
+    ldapstls:
+      cafile: "/config/ca.crt"
+      crtfile: "/config/tls.crt"
+      crtkeyfile: "/config/tls.key"
+  database:
+    - base: "dc=example,dc=org"
+  schemas: []
+  modules:
+    - name: unique
+    - name: pw-sha2
+    - name: ppolicy
+
+# Configuración de certificados
+certManager:
+  issuerRef:
+    name: "apisix-issuer"
+    kind: "ClusterIssuer"
+    group: "cert-manager.io"
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+
+# Secret para el passfile
+secrets:
+  credentials:
+    name: "ldap-admin-secret"  # Nombre del secret que contiene el passfile
+    passwordKey: "password"    # Clave dentro del secret que contiene el password
+
+nodeSelector:
+  "eks.amazonaws.com/nodegroup": "infra"

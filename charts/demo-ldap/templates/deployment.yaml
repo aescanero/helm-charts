@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-ldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-ldap
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-ldap
+    spec:
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      containers:
+      - name: ldap
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["sleep"]
+        args: ["3600"]
+        #command: ["/controller"]
+        #args: ["start", "--config_file=/config/ldap.yaml"]
+        ports:
+        - containerPort: 9090
+          name: http
+        - containerPort: 1389
+          name: ldap
+        - containerPort: 1686
+          name: ldaps
+        volumeMounts:
+        # Luego montamos cada archivo en su ubicación
+        - name: config-file
+          mountPath: /config/ldap.yaml
+          subPath: ldap.yaml
+        - name: credentials
+          mountPath: /config/passfile
+          subPath: passfile
+        - name: certificates
+          mountPath: /config/ca.crt
+          subPath: ca.crt
+        - name: certificates
+          mountPath: /config/tls.crt
+          subPath: tls.crt
+        - name: certificates
+          mountPath: /config/tls.key
+          subPath: tls.key
+        - name: var-ldap
+          mountPath: /var/lib/ldap
+        - name: slapd-config
+          mountPath: /etc/ldap
+      volumes:
+       # Volumen base para el directorio /config
+      - name: config-dir
+        emptyDir: {}
+      # ConfigMap con la configuración
+      - name: config-file
+        configMap:
+          name: {{ .Release.Name }}-ldap-config
+      - name: credentials
+        secret:
+          secretName: {{ .Values.secrets.credentials.name }}
+          items:
+            - key: {{ .Values.secrets.credentials.passwordKey }}
+              path: passfile
+      - name: certificates
+        secret:
+          secretName: {{ .Release.Name }}-ldap-cert
+      - name: var-ldap
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-var-ldap
+      - name: slapd-config
+        emptyDir: {}
