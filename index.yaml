@@ -35,6 +35,15 @@ entries:
   ldap-chart:
   - apiVersion: v2
     appVersion: 0.1.3
+    created: "2025-01-02T16:50:12.098392237Z"
+    description: A Helm chart for OpenLDAP Node
+    digest: 2b2a3e892b33b3756ba64194bb0eab5363a762bd6af34ba860b337f1754ae50c
+    name: ldap-chart
+    urls:
+    - ldap-chart-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 0.1.3
     created: "2025-01-02T15:11:26.020168876Z"
     description: A Helm chart for OpenLDAP Node
     digest: 11f239f460ab6a600565fc6112d64b5fe39d1e3cd0980dd0ac772b076bf6d006
@@ -53,4 +62,4 @@ entries:
     urls:
     - powerdns-0.1.11.tgz
     version: 0.1.11
-generated: "2025-01-02T15:11:26.020178905Z"
+generated: "2025-01-02T16:50:12.098400973Z"
