@@ -18,10 +18,10 @@ spec:
       - name: ldap
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command: ["sleep"]
-        args: ["3600"]
-        #command: ["/controller"]
-        #args: ["start", "--config_file=/config/ldap.yaml"]
+        #command: ["sleep"]
+        #args: ["3600"]
+        command: ["/controller"]
+        args: ["start", "--config_file=/config/ldap.yaml"]
         ports:
         - containerPort: 9090
           name: http

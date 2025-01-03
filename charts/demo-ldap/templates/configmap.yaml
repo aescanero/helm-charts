@@ -6,14 +6,14 @@ data:
   ldap.yaml: |
     srvconfig:
       debug: {{ .Values.ldapConfig.debug | quote }}
-      adminpasswordfile: {{ .Values.ldapConfig.adminpasswordfile }}
-      ldapport: {{ .Values.ldapConfig.ldapport | quote }}
+      admin_password_file: {{ .Values.ldapConfig.adminpasswordfile }}
+      ldap_port: {{ .Values.ldapConfig.ldapport | quote }}
       srvtls:
-        ldapsport: {{ .Values.ldapConfig.srvtls.ldapsport | quote }}
-        ldapstls:
-          cafile: {{ .Values.ldapConfig.srvtls.ldapstls.cafile }}
-          crtfile: {{ .Values.ldapConfig.srvtls.ldapstls.crtfile }}
-          crtkeyfile: {{ .Values.ldapConfig.srvtls.ldapstls.crtkeyfile }}
+        ldaps_port: {{ .Values.ldapConfig.srvtls.ldapsport | quote }}
+        ldaps_tls:
+          ca_file: {{ .Values.ldapConfig.srvtls.ldapstls.cafile }}
+          crt_file: {{ .Values.ldapConfig.srvtls.ldapstls.crtfile }}
+          crt_key_file: {{ .Values.ldapConfig.srvtls.ldapstls.crtkeyfile }}
     database:
       {{- toYaml .Values.ldapConfig.database | nindent 6 }}
     schemas:
