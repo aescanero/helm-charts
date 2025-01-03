@@ -14,6 +14,19 @@ entries:
     urls:
     - apisix-dashboard-0.8.2.tgz
     version: 0.8.2
+  - apiVersion: v2
+    appVersion: 3.0.0
+    created: "2025-01-03T19:32:39.923498514Z"
+    description: A Helm chart for Apache APISIX Dashboard
+    digest: d959bdffe2d679880c77ce0f0dc968142ee14975c2a131d926c6509c1113ddf3
+    icon: https://apache.org/logos/res/apisix/apisix.png
+    maintainers:
+    - name: tao12345666333
+    name: apisix-dashboard
+    type: application
+    urls:
+    - apisix-dashboard-0.8.2-r2.tgz
+    version: 0.8.2-r2
   etcd:
   - apiVersion: v2
     appVersion: 3.5.9
@@ -71,4 +84,4 @@ entries:
     urls:
     - powerdns-0.1.11.tgz
     version: 0.1.11
-generated: "2025-01-03T00:09:56.554091196Z"
+generated: "2025-01-03T19:32:39.923514614Z"
