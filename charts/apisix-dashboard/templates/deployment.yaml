@@ -60,7 +60,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          #{{- if and .Values.config.conf.etcd.existingSecret (not (empty .Values.config.conf.etcd.existingSecret)) }}
           {{- if or (and .Values.config.conf.etcd.existingSecret (not (empty .Values.config.conf.etcd.existingSecret))) (.Values.config.conf.etcd.password) }}
             - name: APISIX_ETCD_PASSWORD
             {{- if and .Values.config.conf.etcd.existingSecret (not (empty .Values.config.conf.etcd.existingSecret)) }}
