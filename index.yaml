@@ -27,6 +27,16 @@ entries:
     urls:
     - apisix-dashboard-0.8.2-r2.tgz
     version: 0.8.2-r2
+  demo-front:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2025-01-05T00:07:19.990488631Z"
+    description: A Helm chart for Simple Authentication Demo
+    digest: b40338554119abac91be222a90269fd00c4d210388137d6d37c396baa87b4fc1
+    name: demo-front
+    urls:
+    - demo-front-0.0.1.tgz
+    version: 0.0.1
   etcd:
   - apiVersion: v2
     appVersion: 3.5.9
@@ -84,4 +94,4 @@ entries:
     urls:
     - powerdns-0.1.11.tgz
     version: 0.1.11
-generated: "2025-01-03T19:32:39.923514614Z"
+generated: "2025-01-05T00:07:19.990509119Z"
