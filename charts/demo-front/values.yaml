@@ -1,0 +1,13 @@
+image:
+  repository: docker.io/aescanero/demo-front
+  tag: v0.0.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+
+nodeSelector: {}
