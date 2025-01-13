@@ -9,7 +9,8 @@ metadata:
 data:
   setup.sh: |
     #!/bin/sh
-    set -e
+    
+    #set -e
     
     ETCD_ENDPOINTS="http://{{ include "etcd.fullname" . }}-0.{{ include "etcd.fullname" . }}-headless.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.clientPort }}"
     
@@ -43,5 +44,5 @@ data:
     else
       echo "Auth was enabled"
     fi
-    sleep 6000
+    sleep 36000
 {{- end }}
