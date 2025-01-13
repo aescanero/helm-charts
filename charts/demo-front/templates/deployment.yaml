@@ -18,7 +18,18 @@ spec:
       - name: front
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-         ports:
+        #Si .Values.admin.enabled es true importamos desde el secreto indicado en values
+        env:
+            {{- if .Values.admin.enabled }}
+            - name: ADMIN_USERNAME
+              value: {{ .Values.admin.username | quote }}
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.admin.passwordSecret }}
+                  key: {{ .Values.admin.passwordKey }}
+            {{- end }}
+        ports:
         - containerPort: 8080
           name: http
  

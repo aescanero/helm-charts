@@ -1,6 +1,6 @@
 image:
   repository: docker.io/aescanero/demo-front
-  tag: v0.0.1
+  tag: v0.0.2
   pullPolicy: IfNotPresent
 
 service:
