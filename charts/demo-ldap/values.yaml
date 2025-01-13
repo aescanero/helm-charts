@@ -63,4 +63,10 @@ secrets:
     name: "ldap-admin-secret"  # Nombre del secret que contiene el passfile
     passwordKey: "password"    # Clave dentro del secret que contiene el password
 
+admin:
+  enabled: true
+  username: "admin"
+  passwordSecret: "ldap-admin-secret"  # Nombre del secret que contiene el passfile
+  passwordKey: "password"              # Clave dentro del secret que contiene el password
+
 nodeSelector: {}
