@@ -42,30 +42,6 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-      {{- if .Values.auth.enabled }}
-      - name: auth-setup
-        image: "docker.io/aescanero/etcdctl:v0.0.1"
-        command: ["/bin/sh"]
-        args: ['/scripts/setup.sh']
-        env:
-        - name: ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.auth.existingSecret | default (printf "%s-auth" (include "etcd.fullname" .)) }}
-              key: root-password
-        {{- $root := . }}
-        {{- range .Values.auth.users }}
-        - name: USER_{{ .name | upper }}_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "etcd.fullname" $root }}-auth
-              key: {{ .name }}-password
-        {{- end }}
-        volumeMounts:
-        - name: auth-setup
-          mountPath: /scripts
-          readOnly: true
-      {{- end }}
       - name: etcd
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -115,6 +91,8 @@ spec:
           value: {{ .Values.configuration.autoCompactionRetention | quote }}
         - name: ETCD_QUOTA_BACKEND_BYTES
           value: {{ .Values.configuration.quotaBackendBytes | quote }}
+        - name: ETCD_DEPLOYMENT_MODEL
+          value: kubernetes
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:

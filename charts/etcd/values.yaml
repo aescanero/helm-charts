@@ -2,8 +2,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 image:
-  repository: gcr.io/etcd-development/etcd
-  tag: v3.5.9
+  repository: docker.io/aescanero/etcd-node:v0.0.1
+  tag: v0.0.1
   pullPolicy: IfNotPresent 
 
 replicas: 3
