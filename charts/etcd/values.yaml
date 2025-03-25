@@ -2,7 +2,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 image:
-  repository: docker.io/aescanero/etcd-node:v0.0.1
+  repository: docker.io/aescanero/etcd-node
   tag: v0.0.1
   pullPolicy: IfNotPresent 
 

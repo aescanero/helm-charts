@@ -201,17 +201,78 @@ Scaling the etcd cluster requires careful planning:
    - Remove the member from the cluster using etcdctl
    - Scale down the StatefulSet
 
-## Upgrading
+## Prometheus Monitoring
 
-### To 0.2.0
+This chart provides integration with Prometheus to monitor your etcd cluster. When enabled, each etcd node exposes metrics in Prometheus format at the `/metrics` endpoint.
 
-This version introduces support for TLS and authentication configuration. If upgrading from previous versions, note that enabling these features on an existing cluster may require additional steps.
+### Available Metrics
 
-## Limitations
+The main metrics exposed include:
 
-- The etcd cluster will not automatically scale down; manual intervention is required to remove members safely.
-- Changing TLS settings on an existing cluster is not supported and may require a full redeployment.
-- Automated migration between major etcd versions is not supported.
+- `etcd_node_up`: Indicates if the node is operational (1) or down (0)
+- `etcd_node_process_running`: If the etcd process is running
+- `etcd_node_socket_available`: If the etcd socket is available
+- `etcd_node_socket_blocked`: If the socket is blocked (indicates issues)
+- `etcd_node_data_valid`: If the database is valid
+- `etcd_node_has_leader`: If the cluster has an elected leader
+- `etcd_node_is_leader`: If this node is the leader
+- `etcd_node_cluster_size`: Number of members in the cluster
+- `etcd_node_database_size_bytes`: Size of the etcd database
+- `etcd_node_operations_total`: Total number of operations by type
+- `etcd_node_operation_errors_total`: Total number of operation errors by type
+- `etcd_node_operation_duration_seconds`: Duration of operations
+- `etcd_node_last_compaction_timestamp`: Last compaction time
+- `etcd_node_compactions_total`: Total number of compactions
+
+### Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `monitoring.enabled` | Enable Prometheus metrics | `true` |
+| `monitoring.port` | Port to expose Prometheus metrics | `8080` |
+| `monitoring.path` | Path for Prometheus metrics | `/metrics` |
+| `monitoring.serviceMonitor.enabled` | Use ServiceMonitor for Prometheus Operator | `false` |
+| `monitoring.serviceMonitor.interval` | Scraping interval | `15s` |
+| `monitoring.serviceMonitor.labels` | Additional ServiceMonitor labels | `{}` |
+| `monitoring.serviceMonitor.namespace` | ServiceMonitor namespace | Same as release |
+| `healthCheck.enabled` | Enable health checking | `true` |
+| `healthCheck.path` | Path for health check | `/health` |
+
+### Prometheus Operator
+
+If you're using the Prometheus Operator, you can enable the ServiceMonitor to automatically configure scraping:
+
+```yaml
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 10s
+    # Additional labels if needed for your Prometheus to find this ServiceMonitor
+    labels:
+      release: prometheus
+```
+
+### Manual Prometheus Configuration
+
+If you're not using the Prometheus Operator, you can configure Prometheus manually with a configuration like:
+
+```yaml
+scrape_configs:
+  - job_name: 'etcd'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - YOUR_NAMESPACE
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: YOUR_RELEASE_NAME-etcd-metrics
+      - source_labels: [__meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: metrics
+```
 
 ## License
 

@@ -93,11 +93,18 @@ spec:
           value: {{ .Values.configuration.quotaBackendBytes | quote }}
         - name: ETCD_DEPLOYMENT_MODEL
           value: kubernetes
+        - name: ETCD_ROOT_USER
+          value: root
+        - name: ETCD_ROOT_PASSWORD
+          valueFrom:               
+            secretKeyRef:
+              key: root-password
+              name: {{ include "etcd.fullname" . }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:
         - name: data
-          mountPath: /var/run/etcd
+          mountPath: /var/lib/etcd
         {{- if .Values.tls.enabled }}
         - name: server-tls
           mountPath: /etc/etcd/server-tls
