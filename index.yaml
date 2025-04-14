@@ -40,6 +40,23 @@ entries:
   etcd:
   - apiVersion: v2
     appVersion: 3.5.17
+    created: "2025-04-14T16:16:58.121773909Z"
+    description: A Helm chart for deploying etcd cluster on Kubernetes
+    digest: 5273bb2fc830ffbe4b953ef1456edee36692f7b3cc056721015aef0153b34a00
+    keywords:
+    - etcd
+    - database
+    - key-value
+    maintainers:
+    - email: aescanero@disasterproject.com
+      name: Alejandro Escanero Blanco
+    name: etcd
+    type: application
+    urls:
+    - etcd-0.2.4.tgz
+    version: 0.2.4
+  - apiVersion: v2
+    appVersion: 3.5.17
     created: "2025-04-14T15:47:18.879269531Z"
     description: A Helm chart for deploying etcd cluster on Kubernetes
     digest: cf7627dcda396181197d51ad0257d3276311000c044b688ee17ec425eca66440
@@ -162,4 +179,4 @@ entries:
     urls:
     - powerdns-0.1.11.tgz
     version: 0.1.11
-generated: "2025-04-14T15:47:18.879300338Z"
+generated: "2025-04-14T16:16:58.121806259Z"
