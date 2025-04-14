@@ -2,7 +2,7 @@ apiVersion: v2
 name: etcd
 description: A Helm chart for deploying etcd cluster on Kubernetes
 type: application
-version: 0.2.3
+version: 0.2.4
 appVersion: "3.5.17"
 keywords:
   - etcd

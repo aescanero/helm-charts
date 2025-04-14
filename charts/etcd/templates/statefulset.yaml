@@ -96,10 +96,14 @@ spec:
         - name: ETCD_ROOT_USER
           value: root
         - name: ETCD_ROOT_PASSWORD
-          valueFrom:               
+          valueFrom:
             secretKeyRef:
+              {{- if .Values.auth.existingSecrets.enabled }}
+              name: {{ .Values.auth.existingSecrets.root }}
+              {{- else }}
+              name: {{ include "etcd.fullname" . }}-root
+              {{- end }}
               key: root-password
-              name: {{ include "etcd.fullname" . }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:

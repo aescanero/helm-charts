@@ -39,6 +39,7 @@ tls:
   # Usar secretos existentes
   existingSecrets:
     enabled: false
+    root: ""
     server:
       secretName: ""
       certFile: tls.crt
