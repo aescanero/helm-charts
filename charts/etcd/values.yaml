@@ -3,7 +3,7 @@ fullnameOverride: ""
 
 image:
   repository: docker.io/aescanero/etcd-node
-  tag: v0.0.1
+  tag: v0.0.2
   pullPolicy: IfNotPresent 
 
 replicas: 3
