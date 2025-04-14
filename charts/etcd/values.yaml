@@ -27,7 +27,7 @@ service:
   peerPort: 2380
 
 tls:
-  enabled: false
+  enabled: true
   # Usar cert-manager para generar certificados
   certManager:
     enabled: false
