@@ -39,7 +39,6 @@ tls:
   # Usar secretos existentes
   existingSecrets:
     enabled: false
-    root: ""
     server:
       secretName: ""
       certFile: tls.crt
@@ -71,7 +70,9 @@ auth:
   # Opcionalmente establece una contraseña root específica
   rootPassword: "root-password"
   # O usa un secreto existente
-  # existingSecret: "mi-secreto-existente"
+  useExistingSecret: false
+  existingSecret: "mi-secreto-existente"
+  existingKey: "root-password"
   
   # Configura usuarios adicionales
   users: []

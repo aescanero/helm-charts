@@ -98,8 +98,8 @@ spec:
         - name: ETCD_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              {{- if .Values.auth.existingSecrets.enabled }}
-              name: {{ .Values.auth.existingSecrets.root }}
+              {{- if .Values.auth.useExistingSecret }}
+              name: {{ .Values.auth.existingSecret }}
               {{- else }}
               name: {{ include "etcd.fullname" . }}-root
               {{- end }}
